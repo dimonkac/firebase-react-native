@@ -1,5 +1,6 @@
 import {combineReducers} from 'redux';
 import {counterReducer} from './counterReducer';
+import {todosReducer} from './firebaseReducer';
 
 export interface IRootReducer {
   counterReducer: number;
@@ -7,6 +8,7 @@ export interface IRootReducer {
 
 const rootReducer = combineReducers<IRootReducer>({
   counterReducer,
+  todosReducer,
 });
 
 export default rootReducer;
