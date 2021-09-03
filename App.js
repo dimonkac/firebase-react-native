@@ -3,7 +3,6 @@ import {NavigationContainer} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import {Provider} from 'react-redux';
 import store from './src/redux/store';
-import firestore from '@react-native-firebase/firestore';
 import {Counter} from './src/components/counter';
 import {DemoScreen} from './src/screens/demo_screens';
 import {TodoList} from './src/components/todo_list';

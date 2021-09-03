@@ -1,10 +1,11 @@
 import * as types from '../actions/types';
 
 const initialState = {
+  todos: [],
   isloading: false,
 };
 
-const todosReducer = (state = initialState, action) => {
+export const todosReducer = (state = initialState, action) => {
   switch (action.type) {
     case types.FETCH_TODOS:
       return {
@@ -13,10 +14,29 @@ const todosReducer = (state = initialState, action) => {
       };
     case types.SUCCES_TODOS:
       return {
-      ...state,
+        ...state,
         todos: action.payload,
         isloading: false,
       };
-      default:
+    case types.ADD_TODO_SUCCES:
+      const newTodo = {
+        title: action.payload,
+        completed: false,
+      };
+      return {
+        ...state,
+        todos: [...state.todos, newTodo],
+      };
+    default:
       return state;
-  };
+  }
+};
+
+// const addTodo = async () => {
+//   let title = textTodo;
+//   firestore().collection('todos').add({
+//     title,
+//     completed: false,
+//   });
+//   setTextTodo('');
+// };
