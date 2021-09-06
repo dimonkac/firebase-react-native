@@ -2,8 +2,8 @@ import firestore from '@react-native-firebase/firestore';
 
 export const getTodos = async () => {
   try {
-    // return await firestore().collection('todos').get();
-    return await firestore().collection('todos');
+    return await firestore().collection('todos').get();
+
     // .onSnapshot(docs => {
     //   console.log(docs);
     // });
@@ -23,8 +23,15 @@ export const getTodos = async () => {
 
 export const addTodo = async () => {
   try {
-    const allTodo = await firestore().collection('todos');
-    console.log(allTodo);
+    return await firestore().collection('todos');
+  } catch (e) {
+    console.log(e);
+  }
+};
+
+export const deleteTodo = async id => {
+  try {
+    return await firestore().collection('todos').doc(id).delete();
   } catch (e) {
     console.log(e);
   }

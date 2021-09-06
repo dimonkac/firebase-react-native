@@ -13,10 +13,22 @@ export const succesTodos = todos => {
   };
 };
 
-export const addTodoSucess = (text) => {
+export const addTodoSucess = text => {
   return {
     type: types.ADD_TODO_SUCCES,
     payload: text,
   };
 };
 
+export const deleteTodoAction = id => {
+  return {
+    type: types.DELETE_TODO,
+    payload: id,
+  };
+};
+
+export const updateTodoAction = () => {
+  return {
+    type: types.UPDATE_TODO,
+  };
+};

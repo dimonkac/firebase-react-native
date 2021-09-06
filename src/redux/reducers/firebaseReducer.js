@@ -19,14 +19,17 @@ export const todosReducer = (state = initialState, action) => {
         isloading: false,
       };
     case types.ADD_TODO_SUCCES:
-      const newTodo = {
-        title: action.payload,
-        completed: false,
-      };
+      console.log('reducer add', `${action.payload}`);
+      // const newTodo = {
+      //   title: action.payload,
+      //   completed: false,
+      // };
       return {
         ...state,
-        todos: [...state.todos, newTodo],
+        // todos: [...state.todos, newTodo],
       };
+    case types.DELETE_TODO:
+      return state;
     default:
       return state;
   }
