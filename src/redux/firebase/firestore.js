@@ -1,4 +1,5 @@
 import firestore from '@react-native-firebase/firestore';
+import * as types from '../actions/types';
 
 export const getTodos = async () => {
   try {
@@ -31,7 +32,31 @@ export const addTodo = async () => {
 
 export const deleteTodo = async id => {
   try {
-    return await firestore().collection('todos').doc(id).delete();
+    await firestore().collection('todos').doc(id).delete();
+    return true;
+  } catch (e) {
+    // return null;
+    console.log(e);
+  }
+};
+
+export const updateTodo = async ({id, text}) => {
+  try {
+    return await firestore()
+      .collection(types.TODOS)
+      .doc(id)
+      .update({title: text});
+  } catch (e) {
+    console.log(e);
+  }
+};
+
+export const changeCompleted = async ({id, complete}) => {
+  try {
+    return await firestore()
+      .collection(types.TODOS)
+      .doc(id)
+      .update({completed: complete});
   } catch (e) {
     console.log(e);
   }

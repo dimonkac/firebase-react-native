@@ -1,6 +1,5 @@
 import {
   ActivityIndicator,
-  Button,
   FlatList,
   Modal,
   SafeAreaView,
@@ -8,6 +7,7 @@ import {
   TextInput,
   TouchableOpacity,
   View,
+  Switch,
 } from 'react-native';
 import {useDispatch, useSelector} from 'react-redux';
 import React, {useEffect, useState} from 'react';
@@ -17,14 +17,16 @@ import {
   addTodoSucess,
   deleteTodoAction,
   fetchTodos,
+  updateCompletedAction,
+  updateTodoAction,
 } from '../redux/actions/firebaseActions';
 
 export const TodoList = () => {
-  console.log('render todolist');
   const dispatch = useDispatch();
   const [textTodo, setTextTodo] = useState('');
   const [modalVisible, setModalVisible] = useState(false);
   const [updateText, setUpdateText] = useState('');
+  const [updateId, setUpdateId] = useState(0);
   const {todos, isloading} = useSelector(state => state.todosReducer);
 
   useEffect(() => {
@@ -40,21 +42,9 @@ export const TodoList = () => {
     return () => subscriber();
   }, []);
 
-  console.log(todos);
-  console.log(isloading);
-
   const onChangeText = value => {
     setTextTodo(value);
   };
-
-  // const addTodo = async () => {
-  //   let title = textTodo;
-  //   firestore().collection('todos').add({
-  //     title,
-  //     completed: false,
-  //   });
-  //   setTextTodo('');
-  // };
 
   const getTodo = () => {
     dispatch(fetchTodos());
@@ -71,14 +61,27 @@ export const TodoList = () => {
 
   const openModal = id => {
     setModalVisible(!modalVisible);
+    setUpdateId(id);
+  };
+
+  const closeModal = () => {
+    setModalVisible(!modalVisible);
+    setUpdateText('');
   };
 
   const updateTextTodo = () => {
     setModalVisible(!modalVisible);
+    dispatch(updateTodoAction(updateText, updateId));
+    setUpdateText('');
   };
 
   const newTextTodo = value => {
     setUpdateText(value);
+  };
+
+  const changeCompleteTodo = (id, completed) => {
+    let complete = !completed;
+    dispatch(updateCompletedAction(id ,complete));
   };
 
   const renderTodo = ({item}) => {
@@ -96,14 +99,39 @@ export const TodoList = () => {
           <View style={{top: '40%'}}>
             <TextInput
               placeholder="enter text"
-              style={{borderWidth: 1}}
+              style={{borderWidth: 1, margin: 10}}
               onChangeText={newTextTodo}
+              value={updateText}
             />
-            <TouchableOpacity onPress={updateTextTodo}>
-              <Text>Update</Text>
-            </TouchableOpacity>
+            {updateText ? (
+              <>
+                <TouchableOpacity
+                  onPress={() => {
+                    updateTextTodo(item.docID);
+                  }}
+                >
+                  <Text style={{textAlign: 'center', fontSize: 16}}>
+                    Update
+                  </Text>
+                </TouchableOpacity>
+                <TouchableOpacity onPress={closeModal}>
+                  <Text style={{textAlign: 'center', fontSize: 16}}>
+                    cancel
+                  </Text>
+                </TouchableOpacity>
+              </>
+            ) : (
+              <TouchableOpacity onPress={closeModal}>
+                <Text style={{textAlign: 'center', fontSize: 16}}>cancel</Text>
+              </TouchableOpacity>
+            )}
           </View>
         </Modal>
+        <View />
+        <Switch
+          value={item.completed}
+          onValueChange={() => changeCompleteTodo(item.docID, item.completed)}
+        />
         <Text
           key={item.docID}
           style={{color: `${item.completed ? 'blue' : 'red'}`}}
@@ -132,22 +160,6 @@ export const TodoList = () => {
     <SafeAreaView style={{flex: 1}}>
       <View>
         <Text style={{textAlign: 'center', fontWeight: 'bold'}}>TODO LIST</Text>
-        {/*<Button title="get Todos" onPress={getTodos} />*/}
-        {/*<Button title="Add TODO" onPress={addTodo} />*/}
-        {/*<TextInput*/}
-        {/*  value={textTodo}*/}
-        {/*  style={{borderWidth: 1, marginHorizontal: 10}}*/}
-        {/*  onChangeText={onChangeText}*/}
-        {/*/>*/}
-        {/*<View>*/}
-        {/*  {myTodo.map(todo => (*/}
-        {/*    <View key={todo.docID}>*/}
-        {/*      <Text style={{color: `${todo.completed ? 'green' : 'red'}`}}>*/}
-        {/*        {todo.title}*/}
-        {/*      </Text>*/}
-        {/*    </View>*/}
-        {/*  ))}*/}
-        {/*</View>*/}
       </View>
       <View>
         <TouchableOpacity onPress={getTodo}>
@@ -183,7 +195,11 @@ export const TodoList = () => {
       </View>
       <View style={{flex: 1, backgroundColor: 'orange'}}>
         {isloading ? (
-          <ActivityIndicator />
+          <ActivityIndicator
+            style={{marginTop: 150}}
+            size="large"
+            color="#00ff00"
+          />
         ) : (
           <FlatList data={todos} renderItem={renderTodo} />
         )}

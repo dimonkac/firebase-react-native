@@ -27,8 +27,16 @@ export const deleteTodoAction = id => {
   };
 };
 
-export const updateTodoAction = () => {
+export const updateTodoAction = (text, id) => {
   return {
     type: types.UPDATE_TODO,
+    payload: {text, id},
+  };
+};
+
+export const updateCompletedAction = (id, complete) => {
+  return {
+    type: types.UPDATE_COMPLETED,
+    payload: {id, complete},
   };
 };
