@@ -6,8 +6,8 @@ import {
   Text,
   TextInput,
   TouchableOpacity,
-  View,
   Switch,
+  View,
 } from 'react-native';
 import {useDispatch, useSelector} from 'react-redux';
 import React, {useEffect, useState} from 'react';
@@ -33,13 +33,14 @@ export const TodoList = () => {
     const subscriber = firestore()
       .collection(types.TODOS)
       .onSnapshot(documentSnapshot => {
-        let todos = [];
+        let todo = [];
         documentSnapshot.forEach(doc =>
-          todos.push({docID: doc.id, ...doc.data()}),
+          todo.push({docID: doc.id, ...doc.data()}),
         );
-        dispatch(fetchTodos(todos));
+        dispatch(fetchTodos(todo));
       });
     return () => subscriber();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const onChangeText = value => {
@@ -81,7 +82,7 @@ export const TodoList = () => {
 
   const changeCompleteTodo = (id, completed) => {
     let complete = !completed;
-    dispatch(updateCompletedAction(id ,complete));
+    dispatch(updateCompletedAction(id, complete));
   };
 
   const renderTodo = ({item}) => {

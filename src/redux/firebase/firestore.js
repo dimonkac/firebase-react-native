@@ -1,4 +1,5 @@
 import firestore from '@react-native-firebase/firestore';
+import auth from '@react-native-firebase/auth';
 import * as types from '../actions/types';
 
 export const getTodos = async () => {
@@ -60,4 +61,13 @@ export const changeCompleted = async ({id, complete}) => {
   } catch (e) {
     console.log(e);
   }
+};
+
+export const signUser = async () => {
+  return await auth()
+    .signInAnonymously()
+    .then(user => {
+      console.log('User signed in anonymously');
+      return user.user.uid;
+    });
 };

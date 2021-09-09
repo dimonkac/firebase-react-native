@@ -6,17 +6,17 @@ export const fetchTodos = () => {
   };
 };
 
-export const succesTodos = todos => {
+export const succesTodos = (todos, userId) => {
   return {
     type: types.SUCCES_TODOS,
-    payload: todos,
+    payload: {todos, userId},
   };
 };
 
-export const addTodoSucess = text => {
+export const addTodoSucess = (text, userId) => {
   return {
     type: types.ADD_TODO_SUCCES,
-    payload: text,
+    payload: {text, userId},
   };
 };
 
@@ -38,5 +38,18 @@ export const updateCompletedAction = (id, complete) => {
   return {
     type: types.UPDATE_COMPLETED,
     payload: {id, complete},
+  };
+};
+
+export const fetchSignInAction = () => {
+  return {
+    type: types.SIGN_IN_FETCH,
+  };
+};
+
+export const succesSignInAction = userId => {
+  return {
+    type: types.SIGN_IN_SUCCES,
+    payload: userId,
   };
 };

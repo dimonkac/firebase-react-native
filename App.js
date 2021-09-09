@@ -6,6 +6,7 @@ import store from './src/redux/store';
 import {Counter} from './src/components/counter';
 import {DemoScreen} from './src/screens/demo_screens';
 import {TodoList} from './src/components/todo_list';
+import {Authentication} from './src/components/authentication';
 
 const Stack = createNativeStackNavigator();
 
@@ -14,7 +15,8 @@ const App = () => {
   return (
     <Provider store={store}>
       <NavigationContainer>
-        <Stack.Navigator initialRouteName="DemoScreen">
+        <Stack.Navigator initialRouteName="Authentication">
+          <Stack.Screen name="Authentication" component={Authentication} />
           <Stack.Screen name="DemoScreen" component={DemoScreen} />
           <Stack.Screen name="Counter" component={Counter} />
           <Stack.Screen name="TodoList" component={TodoList} />

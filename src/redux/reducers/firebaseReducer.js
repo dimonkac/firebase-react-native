@@ -3,6 +3,7 @@ import * as types from '../actions/types';
 const initialState = {
   todos: [],
   isloading: false,
+  userID: '',
 };
 
 export const todosReducer = (state = initialState, action) => {
@@ -32,20 +33,20 @@ export const todosReducer = (state = initialState, action) => {
 
     case types.UPDATE_TODO:
       return {...state};
-    //
-    // case types.UPDATE_COMPLETED:
-    //   return {...state};
+
+    case types.SIGN_IN_FETCH:
+      return {
+        ...state,
+        isloading: true,
+      };
+    case types.SIGN_IN_SUCCES:
+      return {
+        ...state,
+        isloading: false,
+        userID: action.payload,
+      };
 
     default:
       return state;
   }
 };
-
-// const addTodo = async () => {
-//   let title = textTodo;
-//   firestore().collection('todos').add({
-//     title,
-//     completed: false,
-//   });
-//   setTextTodo('');
-// };
