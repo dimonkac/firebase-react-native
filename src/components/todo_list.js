@@ -8,6 +8,7 @@ import {
   TouchableOpacity,
   Switch,
   View,
+  StyleSheet,
 } from 'react-native';
 import {useDispatch, useSelector} from 'react-redux';
 import React, {useEffect, useState} from 'react';
@@ -27,17 +28,22 @@ export const TodoList = () => {
   const [modalVisible, setModalVisible] = useState(false);
   const [updateText, setUpdateText] = useState('');
   const [updateId, setUpdateId] = useState(0);
-  const {todos, isloading} = useSelector(state => state.todosReducer);
+  const {todos, isloading, userID} = useSelector(state => state.todosReducer);
+
+  console.log(todos.todos);
+  console.log(isloading);
+  console.log(userID);
 
   useEffect(() => {
     const subscriber = firestore()
       .collection(types.TODOS)
+      .where('userId', '==', 'userID')
       .onSnapshot(documentSnapshot => {
         let todo = [];
         documentSnapshot.forEach(doc =>
           todo.push({docID: doc.id, ...doc.data()}),
         );
-        dispatch(fetchTodos(todo));
+        dispatch(fetchTodos(userID));
       });
     return () => subscriber();
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -48,11 +54,11 @@ export const TodoList = () => {
   };
 
   const getTodo = () => {
-    dispatch(fetchTodos());
+    dispatch(fetchTodos(userID));
   };
 
   const addTodoButton = () => {
-    dispatch(addTodoSucess(textTodo));
+    dispatch(addTodoSucess(textTodo, userID));
     setTextTodo('');
   };
 
@@ -87,20 +93,12 @@ export const TodoList = () => {
 
   const renderTodo = ({item}) => {
     return (
-      <View
-        style={{
-          backgroundColor: 'grey',
-          alignItems: 'center',
-          margin: 10,
-          flexDirection: 'row',
-          justifyContent: 'space-between',
-        }}
-      >
+      <View style={styles.conteinerRenderFlat}>
         <Modal visible={modalVisible}>
-          <View style={{top: '40%'}}>
+          <View style={styles.positionModal}>
             <TextInput
               placeholder="enter text"
-              style={{borderWidth: 1, margin: 10}}
+              style={styles.inputModal}
               onChangeText={newTextTodo}
               value={updateText}
             />
@@ -111,19 +109,15 @@ export const TodoList = () => {
                     updateTextTodo(item.docID);
                   }}
                 >
-                  <Text style={{textAlign: 'center', fontSize: 16}}>
-                    Update
-                  </Text>
+                  <Text style={styles.buttonStyle}>Update</Text>
                 </TouchableOpacity>
                 <TouchableOpacity onPress={closeModal}>
-                  <Text style={{textAlign: 'center', fontSize: 16}}>
-                    cancel
-                  </Text>
+                  <Text style={styles.buttonStyle}>cancel</Text>
                 </TouchableOpacity>
               </>
             ) : (
               <TouchableOpacity onPress={closeModal}>
-                <Text style={{textAlign: 'center', fontSize: 16}}>cancel</Text>
+                <Text style={styles.buttonStyle}>cancel</Text>
               </TouchableOpacity>
             )}
           </View>
@@ -158,53 +152,60 @@ export const TodoList = () => {
   };
 
   return (
-    <SafeAreaView style={{flex: 1}}>
+    <SafeAreaView style={styles.container}>
       <View>
-        <Text style={{textAlign: 'center', fontWeight: 'bold'}}>TODO LIST</Text>
+        <Text style={styles.textStyle}>TODO LIST</Text>
       </View>
       <View>
         <TouchableOpacity onPress={getTodo}>
-          <Text
-            style={{
-              color: 'red',
-              backgroundColor: 'aqua',
-              textAlign: 'center',
-              fontSize: 18,
-            }}
-          >
-            GET TODOS
-          </Text>
+          <Text style={styles.buttonStyle}>GET TODOS</Text>
         </TouchableOpacity>
-        <View
-          style={{
-            flexDirection: 'row',
-            justifyContent: 'space-around',
-            marginVertical: 5,
-          }}
-        >
+        <View style={styles.containerInput}>
           <TextInput
-            style={{borderWidth: 1, width: '60%', fontSize: 20}}
+            style={styles.inputStele}
             onChangeText={onChangeText}
             value={textTodo}
           />
           <TouchableOpacity onPress={addTodoButton}>
-            <Text style={{backgroundColor: 'aqua', fontSize: 20}}>
-              ADD TODO
-            </Text>
+            <Text style={styles.buttonStyle}>ADD TODO</Text>
           </TouchableOpacity>
         </View>
       </View>
-      <View style={{flex: 1, backgroundColor: 'orange'}}>
+      <View style={styles.conteinerFlatlist}>
         {isloading ? (
           <ActivityIndicator
-            style={{marginTop: 150}}
+            style={styles.indicatorStyle}
             size="large"
             color="#00ff00"
           />
         ) : (
-          <FlatList data={todos} renderItem={renderTodo} />
+          <FlatList data={todos.todos} renderItem={renderTodo} />
         )}
       </View>
     </SafeAreaView>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {flex: 1},
+  conteinerFlatlist: {flex: 1, backgroundColor: 'orange'},
+  indicatorStyle: {marginTop: 150},
+  buttonStyle: {backgroundColor: 'aqua', textAlign: 'center', fontSize: 20},
+  inputStele: {borderWidth: 1, width: '60%', fontSize: 20},
+  containerInput: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    marginVertical: 5,
+  },
+  inputModal: {borderWidth: 1, margin: 10},
+  positionModal: {top: '40%'},
+  conteinerRenderFlat: {
+    flex: 1,
+    backgroundColor: 'grey',
+    alignItems: 'center',
+    margin: 10,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+  textStyle: {textAlign: 'center', fontWeight: 'bold'},
+});

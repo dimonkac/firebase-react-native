@@ -1,16 +1,12 @@
 import React from 'react';
 import {
-  ImageBackground,
   SafeAreaView,
   Text,
   TouchableOpacity,
   View,
   StyleSheet,
 } from 'react-native';
-
-const image = {
-  uri: 'https://www.drzimmerman.com/wp-content/uploads/2017/10/Energize-Icon-Imagr-1400x800.png',
-};
+// import {TodoList} from '../components/todo_list';
 
 export const DemoScreen = ({navigation}) => {
   // const normalizedData = data => {
@@ -29,19 +25,15 @@ export const DemoScreen = ({navigation}) => {
   // console.log(normalizedData(0.009));
 
   return (
-    <SafeAreaView style={{flex: 1}}>
-      <ImageBackground style={{flex: 1}} source={image} resizeMode="cover">
-        <View style={styles.container}>
-          <TouchableOpacity
-            onPress={() => navigation.navigate('Authentication')}
-          >
-            <Text style={styles.textButton}>Authentication</Text>
-          </TouchableOpacity>
-          <TouchableOpacity onPress={() => navigation.navigate('Counter')}>
-            <Text style={styles.textButton}>Counter</Text>
-          </TouchableOpacity>
-        </View>
-      </ImageBackground>
+    <SafeAreaView style={styles.container}>
+      <View style={styles.containerView}>
+        {/*<TouchableOpacity onPress={() => navigation.navigate('TodoList')}>*/}
+        {/*  <Text style={styles.textButton}>TodoList</Text>*/}
+        {/*</TouchableOpacity>*/}
+        <TouchableOpacity onPress={() => navigation.navigate('Counter')}>
+          <Text style={styles.textButton}>Counter</Text>
+        </TouchableOpacity>
+      </View>
     </SafeAreaView>
   );
 };
@@ -52,6 +44,10 @@ const styles = StyleSheet.create({
     fontSize: 20,
   },
   container: {
+    flex: 1,
+    backgroundColor: '#ced6da',
+  },
+  containerView: {
     flexDirection: 'row',
     justifyContent: 'space-around',
   },

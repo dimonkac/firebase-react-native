@@ -1,8 +1,9 @@
 import * as types from './types';
 
-export const fetchTodos = () => {
+export const fetchTodos = userId => {
   return {
     type: types.FETCH_TODOS,
+    payload: userId,
   };
 };
 

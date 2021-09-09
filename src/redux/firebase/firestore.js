@@ -2,9 +2,12 @@ import firestore from '@react-native-firebase/firestore';
 import auth from '@react-native-firebase/auth';
 import * as types from '../actions/types';
 
-export const getTodos = async () => {
+export const getTodos = async userId => {
   try {
-    return await firestore().collection('todos').get();
+    return await firestore()
+      .collection('todos')
+      .where('userId', '==', `${userId}`)
+      .get();
 
     // .onSnapshot(docs => {
     //   console.log(docs);

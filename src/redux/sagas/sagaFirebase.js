@@ -11,9 +11,9 @@ import {
 } from '../firebase/firestore';
 import {Alert} from 'react-native';
 
-export function* fetchTodos() {
+export function* fetchTodos(action) {
   try {
-    const todos = yield call(getTodos);
+    const todos = yield call(getTodos, action.payload);
     const normalizedTodos = todos.docs.map(todo => ({
       docID: todo.id,
       ...todo.data(),
@@ -34,7 +34,8 @@ export function* addTodos(action) {
   try {
     const todos = yield call(addTodo, action.payload);
     todos.add({
-      title: action.payload,
+      title: action.payload.text,
+      userId: action.payload.userId,
       completed: false,
     });
   } catch (e) {
