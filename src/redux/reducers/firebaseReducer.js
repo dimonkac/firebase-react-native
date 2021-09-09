@@ -60,6 +60,19 @@ export const todosReducer = (state = initialState, action) => {
         userID: action.payload,
       };
 
+    case types.SIGN_IN_FETCH_PASSWORD:
+      return {
+        ...state,
+        isloading: true,
+      };
+
+    case types.SIGN_IN_SUCCES_PASSWORD:
+      return {
+        ...state,
+        isloading: false,
+        userID: action.payload,
+      };
+
     default:
       return state;
   }

@@ -66,3 +66,17 @@ export const succesSignOutAction = () => {
     type: types.SIGN_OUT_SUCCES,
   };
 };
+
+export const fetchSignInPasswordAction = (email, password) => {
+  return {
+    type: types.SIGN_IN_FETCH_PASSWORD,
+    payload: {email, password},
+  };
+};
+
+export const succesSignInPasswordAction = userId => {
+  return {
+    type: types.SIGN_IN_SUCCES_PASSWORD,
+    payload: userId,
+  };
+};

@@ -223,6 +223,6 @@ const styles = StyleSheet.create({
   },
   textStyle: {textAlign: 'center', fontWeight: 'bold'},
   textContainer: {
-    width: '37',
+    width: '37%',
   },
 });

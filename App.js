@@ -7,6 +7,7 @@ import {Counter} from './src/components/counter';
 import {DemoScreen} from './src/screens/demo_screens';
 import {TodoList} from './src/components/todo_list';
 import {Authentication} from './src/components/authentication';
+import {Registration} from './src/components/registration';
 
 const Stack = createNativeStackNavigator();
 
@@ -20,6 +21,7 @@ const App = () => {
           <Stack.Screen name="DemoScreen" component={DemoScreen} />
           <Stack.Screen name="Counter" component={Counter} />
           <Stack.Screen name="TodoList" component={TodoList} />
+          <Stack.Screen name="Registration" component={Registration} />
         </Stack.Navigator>
       </NavigationContainer>
     </Provider>
