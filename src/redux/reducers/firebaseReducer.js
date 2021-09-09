@@ -39,7 +39,21 @@ export const todosReducer = (state = initialState, action) => {
         ...state,
         isloading: true,
       };
+
     case types.SIGN_IN_SUCCES:
+      return {
+        ...state,
+        isloading: false,
+        userID: action.payload,
+      };
+
+    case types.SIGN_OUT_FETCH:
+      return {
+        ...state,
+        isloading: true,
+      };
+
+    case types.SIGN_OUT_SUCCES:
       return {
         ...state,
         isloading: false,

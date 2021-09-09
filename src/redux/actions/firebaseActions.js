@@ -54,3 +54,15 @@ export const succesSignInAction = userId => {
     payload: userId,
   };
 };
+
+export const fetchSignOutAction = () => {
+  return {
+    type: types.SIGN_OUT_FETCH,
+  };
+};
+
+export const succesSignOutAction = () => {
+  return {
+    type: types.SIGN_OUT_SUCCES,
+  };
+};

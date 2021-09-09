@@ -17,6 +17,7 @@ import * as types from '../redux/actions/types';
 import {
   addTodoSucess,
   deleteTodoAction,
+  fetchSignOutAction,
   fetchTodos,
   updateCompletedAction,
   updateTodoAction,
@@ -26,18 +27,14 @@ export const TodoList = () => {
   const dispatch = useDispatch();
   const [textTodo, setTextTodo] = useState('');
   const [modalVisible, setModalVisible] = useState(false);
-  const [updateText, setUpdateText] = useState('');
+  const [updateText, setUpdateText] = useState(`${updateText}`);
   const [updateId, setUpdateId] = useState(0);
   const {todos, isloading, userID} = useSelector(state => state.todosReducer);
-
-  console.log(todos.todos);
-  console.log(isloading);
-  console.log(userID);
 
   useEffect(() => {
     const subscriber = firestore()
       .collection(types.TODOS)
-      .where('userId', '==', 'userID')
+      .where('userId', '==', `${userID}`)
       .onSnapshot(documentSnapshot => {
         let todo = [];
         documentSnapshot.forEach(doc =>
@@ -53,9 +50,9 @@ export const TodoList = () => {
     setTextTodo(value);
   };
 
-  const getTodo = () => {
-    dispatch(fetchTodos(userID));
-  };
+  // const getTodo = () => {
+  //   dispatch(fetchTodos(userID));
+  // };
 
   const addTodoButton = () => {
     dispatch(addTodoSucess(textTodo, userID));
@@ -66,8 +63,9 @@ export const TodoList = () => {
     dispatch(deleteTodoAction(id));
   };
 
-  const openModal = id => {
+  const openModal = (id, title) => {
     setModalVisible(!modalVisible);
+    setUpdateText(title);
     setUpdateId(id);
   };
 
@@ -89,6 +87,10 @@ export const TodoList = () => {
   const changeCompleteTodo = (id, completed) => {
     let complete = !completed;
     dispatch(updateCompletedAction(id, complete));
+  };
+
+  const signOutButton = () => {
+    dispatch(fetchSignOutAction());
   };
 
   const renderTodo = ({item}) => {
@@ -122,17 +124,19 @@ export const TodoList = () => {
             )}
           </View>
         </Modal>
-        <View />
         <Switch
           value={item.completed}
           onValueChange={() => changeCompleteTodo(item.docID, item.completed)}
         />
-        <Text
-          key={item.docID}
-          style={{color: `${item.completed ? 'blue' : 'red'}`}}
-        >
-          {item.title}
-        </Text>
+        <View style={styles.textContainer}>
+          <Text
+            key={item.docID}
+            style={{color: `${item.completed ? 'blue' : 'red'}`}}
+          >
+            {item.title}
+          </Text>
+        </View>
+
         <TouchableOpacity
           onPress={() => {
             deleteButton(item.docID);
@@ -142,7 +146,7 @@ export const TodoList = () => {
         </TouchableOpacity>
         <TouchableOpacity
           onPress={() => {
-            openModal(item.docID);
+            openModal(item.docID, item.title);
           }}
         >
           <Text>Update</Text>
@@ -157,9 +161,9 @@ export const TodoList = () => {
         <Text style={styles.textStyle}>TODO LIST</Text>
       </View>
       <View>
-        <TouchableOpacity onPress={getTodo}>
-          <Text style={styles.buttonStyle}>GET TODOS</Text>
-        </TouchableOpacity>
+        {/*<TouchableOpacity onPress={getTodo}>*/}
+        {/*  <Text style={styles.buttonStyle}>GET TODOS</Text>*/}
+        {/*</TouchableOpacity>*/}
         <View style={styles.containerInput}>
           <TextInput
             style={styles.inputStele}
@@ -182,6 +186,11 @@ export const TodoList = () => {
           <FlatList data={todos.todos} renderItem={renderTodo} />
         )}
       </View>
+      <View>
+        <TouchableOpacity onPress={signOutButton}>
+          <Text style={styles.buttonStyle}> SIGN OUT </Text>
+        </TouchableOpacity>
+      </View>
     </SafeAreaView>
   );
 };
@@ -190,7 +199,12 @@ const styles = StyleSheet.create({
   container: {flex: 1},
   conteinerFlatlist: {flex: 1, backgroundColor: 'orange'},
   indicatorStyle: {marginTop: 150},
-  buttonStyle: {backgroundColor: 'aqua', textAlign: 'center', fontSize: 20},
+  buttonStyle: {
+    backgroundColor: 'aqua',
+    textAlign: 'center',
+    fontSize: 20,
+    marginBottom: 5,
+  },
   inputStele: {borderWidth: 1, width: '60%', fontSize: 20},
   containerInput: {
     flexDirection: 'row',
@@ -208,4 +222,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   textStyle: {textAlign: 'center', fontWeight: 'bold'},
+  textContainer: {
+    width: '37',
+  },
 });

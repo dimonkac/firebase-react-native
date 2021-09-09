@@ -10,3 +10,5 @@ export const UPDATE_TODO = 'UPDATE_TODO';
 export const UPDATE_COMPLETED = 'UPDATE_COMPLETED';
 export const SIGN_IN_FETCH = 'SIGN_IN_FETCH';
 export const SIGN_IN_SUCCES = 'SIGN_IN_SUCCES';
+export const SIGN_OUT_FETCH = 'SIGN_OUT_FETCH';
+export const SIGN_OUT_SUCCES = 'SIGN_OUT_SUCCES';

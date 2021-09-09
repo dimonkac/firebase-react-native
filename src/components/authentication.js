@@ -12,9 +12,9 @@ import {TodoList} from './todo_list';
 
 export const Authentication = () => {
   const dispatch = useDispatch();
-  const user = useSelector(state => state.todosReducer.userID);
 
-  console.log(user);
+  const user = useSelector(state => state.todosReducer.userID);
+  // console.log(user);
 
   const sign = () => {
     dispatch(fetchSignInAction());
@@ -27,7 +27,7 @@ export const Authentication = () => {
       ) : (
         <View style={styles.containerView}>
           <TouchableOpacity onPress={sign}>
-            <Text>sign-in</Text>
+            <Text style={styles.textStyle}>sign-in</Text>
           </TouchableOpacity>
         </View>
       )}
@@ -39,6 +39,9 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#97b1d8',
+  },
+  textStyle: {
+    fontSize: 20,
   },
   containerView: {
     flex: 1,

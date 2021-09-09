@@ -1,6 +1,10 @@
 import {put, all, call, takeLatest} from 'redux-saga/effects';
 import * as types from '../actions/types';
-import {succesSignInAction, succesTodos} from '../actions/firebaseActions';
+import {
+  succesSignInAction,
+  succesSignOutAction,
+  succesTodos,
+} from '../actions/firebaseActions';
 import {
   addTodo,
   getTodos,
@@ -8,6 +12,7 @@ import {
   updateTodo,
   changeCompleted,
   signUser,
+  sigOutUser,
 } from '../firebase/firestore';
 import {Alert} from 'react-native';
 
@@ -78,6 +83,15 @@ export function* signInSaga() {
   }
 }
 
+export function* signOutSaga() {
+  try {
+    const user = yield call(sigOutUser);
+    yield put(succesSignOutAction(user));
+  } catch (e) {
+    console.log(e);
+  }
+}
+
 export function* watchSagaTodos() {
   yield all([
     takeLatest(types.FETCH_TODOS, fetchTodos),
@@ -86,5 +100,6 @@ export function* watchSagaTodos() {
     takeLatest(types.UPDATE_TODO, updateTodoSaga),
     takeLatest(types.UPDATE_COMPLETED, updateCompleted),
     takeLatest(types.SIGN_IN_FETCH, signInSaga),
+    takeLatest(types.SIGN_OUT_FETCH, signOutSaga),
   ]);
 }
