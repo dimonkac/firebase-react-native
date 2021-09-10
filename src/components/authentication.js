@@ -6,32 +6,58 @@ import {
   StyleSheet,
   TextInput,
 } from 'react-native';
-import React from 'react';
+import React, {useState} from 'react';
 import {useDispatch, useSelector} from 'react-redux';
-import {fetchSignInAction} from '../redux/actions/firebaseActions';
+import {
+  fetchAuthorizationAction,
+  fetchSignInAction,
+} from '../redux/actions/firebaseActions';
 import {TodoList} from './todo_list';
 
 export const Authentication = ({navigation}) => {
+  const [email, setEmail] = useState('');
+  const [password, setPassord] = useState('');
   const dispatch = useDispatch();
 
   const user = useSelector(state => state.todosReducer.userID);
-  // console.log(user);
 
   const sign = () => {
     dispatch(fetchSignInAction());
   };
 
+  const signAuthoriz = () => {
+    dispatch(fetchAuthorizationAction(email, password));
+  };
+
+  const textEmail = val => {
+    setEmail(val);
+  };
+
+  const textPassword = val => {
+    setPassord(val);
+  };
+
   return (
     <SafeAreaView style={styles.container}>
       {user ? (
-        <TodoList />
+        <TodoList navigation={navigation} />
       ) : (
         <View style={styles.containerView}>
           <TextInput
             placeholderTextColor="#696565"
             placeholder="please enter your email"
-            style={{width: '80%', backgroundColor: '#ffff', borderWidth: 1}}
+            style={styles.inputStyle}
+            onChangeText={textEmail}
           />
+          <TextInput
+            placeholderTextColor="#696565"
+            placeholder="please enter your password"
+            style={styles.inputStyle}
+            onChangeText={textPassword}
+          />
+          <TouchableOpacity onPress={signAuthoriz}>
+            <Text style={styles.textStyle}>sign-in your account</Text>
+          </TouchableOpacity>
           <TouchableOpacity
             onPress={() => {
               navigation.navigate('Registration');
@@ -40,7 +66,7 @@ export const Authentication = ({navigation}) => {
             <Text style={styles.textStyle}>registration</Text>
           </TouchableOpacity>
           <TouchableOpacity onPress={sign}>
-            <Text style={styles.textStyle}>sign-in</Text>
+            <Text style={styles.textStyle}>sign-in anonymous</Text>
           </TouchableOpacity>
         </View>
       )}
@@ -60,5 +86,11 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  inputStyle: {
+    width: '80%',
+    backgroundColor: '#ffff',
+    borderWidth: 1,
+    marginVertical: 5,
   },
 });

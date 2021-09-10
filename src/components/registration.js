@@ -7,13 +7,25 @@ import {
   TextInput,
 } from 'react-native';
 import React, {useState} from 'react';
-import {useDispatch} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 import {fetchSignInPasswordAction} from '../redux/actions/firebaseActions';
+import {TodoList} from './todo_list';
 
 export const Registration = () => {
   const [email, setEmail] = useState('');
   const [password, setPassord] = useState('');
   const dispatch = useDispatch();
+
+  const user = useSelector(state => state.todosReducer.userID);
+  console.log(user);
+
+  // const validateEmail = (e: string): boolean => {
+  //   const re =
+  //     /^(([^<>()[\]\\.,;:\s@“]+(\.[^<>()[\]\\.,;:\s@“]+)*)|(“.+“))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+  //   return !re.test(String(e).toLowerCase());
+  // };
+  //
+  // console.log(validateEmail('dfffd@gmail.com'));
 
   const textEmail = val => {
     setEmail(val);
@@ -29,23 +41,29 @@ export const Registration = () => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <View style={styles.containerView}>
-        <TextInput
-          placeholderTextColor="#696565"
-          placeholder="please enter your email"
-          style={styles.inputStyle}
-          onChangeText={textEmail}
-        />
-        <TextInput
-          placeholderTextColor="#696565"
-          placeholder="please enter your password"
-          style={styles.inputStyle}
-          onChangeText={textPassword}
-        />
-        <TouchableOpacity onPress={registration}>
-          <Text>Registration</Text>
-        </TouchableOpacity>
-      </View>
+      {user ? (
+        <TodoList />
+      ) : (
+        <SafeAreaView style={styles.container}>
+          <View style={styles.containerView}>
+            <TextInput
+              placeholderTextColor="#696565"
+              placeholder="please enter your email"
+              style={styles.inputStyle}
+              onChangeText={textEmail}
+            />
+            <TextInput
+              placeholderTextColor="#696565"
+              placeholder="please enter your password"
+              style={styles.inputStyle}
+              onChangeText={textPassword}
+            />
+            <TouchableOpacity onPress={registration}>
+              <Text>Registration</Text>
+            </TouchableOpacity>
+          </View>
+        </SafeAreaView>
+      )}
     </SafeAreaView>
   );
 };

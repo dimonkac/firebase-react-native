@@ -85,8 +85,9 @@ export const sigOutUser = async () => {
 export const signPasswordUser = async ({email, password}) => {
   return await auth()
     .createUserWithEmailAndPassword(`${email}`, `${password}`)
-    .then(() => {
+    .then(user => {
       console.log('User account created & signed in!');
+      return user.user.uid;
     })
     .catch(error => {
       if (error.code === 'auth/email-already-in-use') {
@@ -97,5 +98,22 @@ export const signPasswordUser = async ({email, password}) => {
         console.log('That email address is invalid!');
       }
       console.error(error);
+    });
+};
+
+export const signAuthorizationUser = async ({email, password}) => {
+  console.log(email);
+  console.log(password);
+  return await auth()
+    .signInWithEmailAndPassword(`${email}`, `${password}`)
+    .then(user => {
+      console.log('User account signed in!');
+      return user.user.uid;
+    })
+    .catch(error => {
+      console.log(error.code);
+      console.log(error.message);
+      // var errorCode = error.code;
+      // var errorMessage = error.message;
     });
 };

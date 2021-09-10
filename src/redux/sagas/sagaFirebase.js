@@ -1,7 +1,9 @@
 import {put, all, call, takeLatest} from 'redux-saga/effects';
 import * as types from '../actions/types';
 import {
-  succesSignInAction, succesSignInPasswordAction,
+  succesSignInAction,
+  succesSignInAuthorizationAction,
+  succesSignInPasswordAction,
   succesSignOutAction,
   succesTodos,
 } from '../actions/firebaseActions';
@@ -12,7 +14,9 @@ import {
   updateTodo,
   changeCompleted,
   signUser,
-  sigOutUser, signPasswordUser,
+  sigOutUser,
+  signPasswordUser,
+  signAuthorizationUser,
 } from '../firebase/firestore';
 import {Alert} from 'react-native';
 
@@ -23,12 +27,6 @@ export function* fetchTodos(action) {
       docID: todo.id,
       ...todo.data(),
     }));
-    // todos.onSnapshot(docs => {
-    //   docs.forEach(doc => {
-    //     normalizedTodos.push({docID: doc.id, ...doc.data()});
-    //   });
-    //   console.log(normalizedTodos);
-    // }),
     yield put(succesTodos(normalizedTodos));
   } catch (error) {
     console.log(error);
@@ -96,7 +94,17 @@ export function* signInPasswordSaga(action) {
   try {
     const user = yield call(signPasswordUser, action.payload);
     console.log(user);
-    // yield put(succesSignInPasswordAction(user));
+    yield put(succesSignInPasswordAction(user));
+  } catch (e) {
+    console.log(e);
+  }
+}
+
+export function* signInAuthorizationSaga(action) {
+  try {
+    const user = yield call(signAuthorizationUser, action.payload);
+    console.log(user);
+    yield put(succesSignInAuthorizationAction(user));
   } catch (e) {
     console.log(e);
   }
@@ -112,5 +120,6 @@ export function* watchSagaTodos() {
     takeLatest(types.SIGN_IN_FETCH, signInSaga),
     takeLatest(types.SIGN_OUT_FETCH, signOutSaga),
     takeLatest(types.SIGN_IN_FETCH_PASSWORD, signInPasswordSaga),
+    takeLatest(types.SIGN_IN_FETCH_AUTHORIZATION, signInAuthorizationSaga),
   ]);
 }

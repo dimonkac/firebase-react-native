@@ -73,6 +73,19 @@ export const todosReducer = (state = initialState, action) => {
         userID: action.payload,
       };
 
+    case types.SIGN_IN_FETCH_AUTHORIZATION:
+      return {
+        ...state,
+        isloading: true,
+      };
+
+    case types.SIGN_IN_SUCCES_AUTHORIZATION:
+      return {
+        ...state,
+        isloading: false,
+        userID: action.payload,
+      };
+
     default:
       return state;
   }

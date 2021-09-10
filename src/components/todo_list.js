@@ -50,10 +50,6 @@ export const TodoList = () => {
     setTextTodo(value);
   };
 
-  // const getTodo = () => {
-  //   dispatch(fetchTodos(userID));
-  // };
-
   const addTodoButton = () => {
     dispatch(addTodoSucess(textTodo, userID));
     setTextTodo('');
@@ -161,9 +157,6 @@ export const TodoList = () => {
         <Text style={styles.textStyle}>TODO LIST</Text>
       </View>
       <View>
-        {/*<TouchableOpacity onPress={getTodo}>*/}
-        {/*  <Text style={styles.buttonStyle}>GET TODOS</Text>*/}
-        {/*</TouchableOpacity>*/}
         <View style={styles.containerInput}>
           <TextInput
             style={styles.inputStele}

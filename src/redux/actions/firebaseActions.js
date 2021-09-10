@@ -80,3 +80,17 @@ export const succesSignInPasswordAction = userId => {
     payload: userId,
   };
 };
+
+export const fetchAuthorizationAction = (email, password) => {
+  return {
+    type: types.SIGN_IN_FETCH_AUTHORIZATION,
+    payload: {email, password},
+  };
+};
+
+export const succesSignInAuthorizationAction = userId => {
+  return {
+    type: types.SIGN_IN_SUCCES_AUTHORIZATION,
+    payload: userId,
+  };
+};
