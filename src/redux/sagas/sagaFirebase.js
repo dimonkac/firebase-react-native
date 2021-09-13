@@ -93,7 +93,6 @@ export function* signOutSaga() {
 export function* signInPasswordSaga(action) {
   try {
     const user = yield call(signPasswordUser, action.payload);
-    console.log(user);
     yield put(succesSignInPasswordAction(user));
   } catch (e) {
     console.log(e);
@@ -103,7 +102,6 @@ export function* signInPasswordSaga(action) {
 export function* signInAuthorizationSaga(action) {
   try {
     const user = yield call(signAuthorizationUser, action.payload);
-    console.log(user);
     yield put(succesSignInAuthorizationAction(user));
   } catch (e) {
     console.log(e);

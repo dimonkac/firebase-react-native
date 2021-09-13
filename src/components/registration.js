@@ -5,6 +5,7 @@ import {
   View,
   StyleSheet,
   TextInput,
+  Alert,
 } from 'react-native';
 import React, {useState} from 'react';
 import {useDispatch, useSelector} from 'react-redux';
@@ -17,15 +18,20 @@ export const Registration = () => {
   const dispatch = useDispatch();
 
   const user = useSelector(state => state.todosReducer.userID);
-  console.log(user);
 
-  // const validateEmail = (e: string): boolean => {
-  //   const re =
-  //     /^(([^<>()[\]\\.,;:\s@“]+(\.[^<>()[\]\\.,;:\s@“]+)*)|(“.+“))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-  //   return !re.test(String(e).toLowerCase());
-  // };
-  //
-  // console.log(validateEmail('dfffd@gmail.com'));
+  const validateEmail = e => {
+    const re =
+      /^(([^<>()[\]\\.,;:\s@“]+(\.[^<>()[\]\\.,;:\s@“]+)*)|(“.+“))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    if (re.test(String(e).toLowerCase())) {
+      // console.log('ok');
+      dispatch(fetchSignInPasswordAction(email, password));
+    } else {
+      Alert.alert('you enter invalid email');
+    }
+    // return re.test(String(e).toLowerCase());
+  };
+
+  // validateEmail(`${email}`);
 
   const textEmail = val => {
     setEmail(val);
@@ -36,7 +42,8 @@ export const Registration = () => {
   };
 
   const registration = () => {
-    dispatch(fetchSignInPasswordAction(email, password));
+    validateEmail(`${email}`);
+    // dispatch(fetchSignInPasswordAction(email, password));
   };
 
   return (

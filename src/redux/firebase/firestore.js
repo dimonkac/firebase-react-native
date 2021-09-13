@@ -61,7 +61,10 @@ export const changeCompleted = async ({id, complete}) => {
     return await firestore()
       .collection(types.TODOS)
       .doc(id)
-      .update({completed: complete});
+      .update({completed: complete})
+      .then(() => {
+        Alert.alert('change complete');
+      });
   } catch (e) {
     console.log(e);
   }
@@ -86,7 +89,7 @@ export const signPasswordUser = async ({email, password}) => {
   return await auth()
     .createUserWithEmailAndPassword(`${email}`, `${password}`)
     .then(user => {
-      console.log('User account created & signed in!');
+      Alert.alert('User account created & signed in!');
       return user.user.uid;
     })
     .catch(error => {
@@ -102,12 +105,10 @@ export const signPasswordUser = async ({email, password}) => {
 };
 
 export const signAuthorizationUser = async ({email, password}) => {
-  console.log(email);
-  console.log(password);
   return await auth()
     .signInWithEmailAndPassword(`${email}`, `${password}`)
     .then(user => {
-      console.log('User account signed in!');
+      Alert.alert('User account signed in!');
       return user.user.uid;
     })
     .catch(error => {
