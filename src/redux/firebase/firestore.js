@@ -45,12 +45,12 @@ export const deleteTodo = async id => {
   }
 };
 
-export const updateTodo = async ({id, text}) => {
+export const updateTodo = async ({id, text, data}) => {
   try {
     return await firestore()
       .collection(types.TODOS)
       .doc(id)
-      .update({title: text});
+      .update({title: text, data: data});
   } catch (e) {
     console.log(e);
   }

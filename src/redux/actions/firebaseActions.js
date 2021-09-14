@@ -14,10 +14,10 @@ export const succesTodos = (todos, userId) => {
   };
 };
 
-export const addTodoSucess = (text, userId) => {
+export const addTodoSucess = (text, userId, data) => {
   return {
     type: types.ADD_TODO_SUCCES,
-    payload: {text, userId},
+    payload: {text, userId, data},
   };
 };
 
@@ -28,10 +28,10 @@ export const deleteTodoAction = id => {
   };
 };
 
-export const updateTodoAction = (text, id) => {
+export const updateTodoAction = (text, id, data) => {
   return {
     type: types.UPDATE_TODO,
-    payload: {text, id},
+    payload: {text, id, data},
   };
 };
 

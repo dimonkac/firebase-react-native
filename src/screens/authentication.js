@@ -68,6 +68,13 @@ export const Authentication = ({navigation}) => {
           <TouchableOpacity onPress={sign}>
             <Text style={styles.textStyle}>sign-in anonymous</Text>
           </TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => {
+              navigation.navigate('Calendars');
+            }}
+          >
+            <Text style={styles.textStyle}>Calendars</Text>
+          </TouchableOpacity>
         </View>
       )}
     </SafeAreaView>

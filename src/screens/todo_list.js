@@ -22,13 +22,15 @@ import {
   updateCompletedAction,
   updateTodoAction,
 } from '../redux/actions/firebaseActions';
+import {Calendars} from './calendar';
 
 export const TodoList = () => {
   const dispatch = useDispatch();
   const [textTodo, setTextTodo] = useState('');
   const [modalVisible, setModalVisible] = useState(false);
   const [updateText, setUpdateText] = useState(`${updateText}`);
-  const [updateId, setUpdateId] = useState(0);
+  const [updateId, setUpdateId] = useState('');
+  const [updateData, setUpdateData] = useState('');
   const {todos, isloading, userID} = useSelector(state => state.todosReducer);
 
   useEffect(() => {
@@ -51,8 +53,9 @@ export const TodoList = () => {
   };
 
   const addTodoButton = () => {
-    dispatch(addTodoSucess(textTodo, userID));
+    dispatch(addTodoSucess(textTodo, userID, updateData));
     setTextTodo('');
+    setUpdateData('');
   };
 
   const deleteButton = id => {
@@ -72,8 +75,9 @@ export const TodoList = () => {
 
   const updateTextTodo = () => {
     setModalVisible(!modalVisible);
-    dispatch(updateTodoAction(updateText, updateId));
+    dispatch(updateTodoAction(updateText, updateId, updateData));
     setUpdateText('');
+    setUpdateData('');
   };
 
   const newTextTodo = value => {
@@ -89,18 +93,26 @@ export const TodoList = () => {
     dispatch(fetchSignOutAction());
   };
 
+  const dataChange = val => {
+    setUpdateData(val);
+  };
+
+  console.log(updateData);
+
   const renderTodo = ({item}) => {
     return (
       <View style={styles.conteinerRenderFlat}>
         <Modal visible={modalVisible}>
           <View style={styles.positionModal}>
+            {/*<View style={{height: 200, marginVertical: 0}}>*/}
             <TextInput
               placeholder="enter text"
               style={styles.inputModal}
               onChangeText={newTextTodo}
               value={updateText}
             />
-            {updateText ? (
+            <Calendars dataChange={dataChange} />
+            {updateData ? (
               <>
                 <TouchableOpacity
                   onPress={() => {
@@ -120,33 +132,44 @@ export const TodoList = () => {
             )}
           </View>
         </Modal>
-        <Switch
-          value={item.completed}
-          onValueChange={() => changeCompleteTodo(item.docID, item.completed)}
-        />
-        <View style={styles.textContainer}>
-          <Text
-            key={item.docID}
-            style={{color: `${item.completed ? 'blue' : 'red'}`}}
+        <View
+          style={{
+            flex: 1,
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+          }}
+        >
+          <Switch
+            value={item.completed}
+            onValueChange={() => changeCompleteTodo(item.docID, item.completed)}
+          />
+          <View style={styles.textContainer}>
+            <Text
+              key={item.docID}
+              style={{color: `${item.completed ? 'blue' : 'red'}`}}
+            >
+              {item.title}
+            </Text>
+          </View>
+          <TouchableOpacity
+            onPress={() => {
+              deleteButton(item.docID);
+            }}
           >
-            {item.title}
-          </Text>
+            <Text>delete</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => {
+              openModal(item.docID, item.title);
+            }}
+          >
+            <Text>Update</Text>
+          </TouchableOpacity>
         </View>
-
-        <TouchableOpacity
-          onPress={() => {
-            deleteButton(item.docID);
-          }}
-        >
-          <Text>delete</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          onPress={() => {
-            openModal(item.docID, item.title);
-          }}
-        >
-          <Text>Update</Text>
-        </TouchableOpacity>
+        <View style={{flexWrap: 'wrap'}}>
+          <Text>{item.data}</Text>
+        </View>
       </View>
     );
   };
@@ -163,11 +186,16 @@ export const TodoList = () => {
             onChangeText={onChangeText}
             value={textTodo}
           />
-          <TouchableOpacity onPress={addTodoButton}>
-            <Text style={styles.buttonStyle}>ADD TODO</Text>
-          </TouchableOpacity>
+          {updateData ? (
+            <TouchableOpacity onPress={addTodoButton}>
+              <Text style={styles.buttonStyle}>ADD TODO</Text>
+            </TouchableOpacity>
+          ) : null}
         </View>
       </View>
+      {textTodo ? (
+        <Calendars dataChange={dataChange}/>
+      ) : null}
       <View style={styles.conteinerFlatlist}>
         {isloading ? (
           <ActivityIndicator
@@ -205,13 +233,13 @@ const styles = StyleSheet.create({
     marginVertical: 5,
   },
   inputModal: {borderWidth: 1, margin: 10},
-  positionModal: {top: '40%'},
+  positionModal: {flex: 1, top: '10%'},
   conteinerRenderFlat: {
     flex: 1,
     backgroundColor: 'grey',
-    alignItems: 'center',
+    // alignItems: 'center',
     margin: 10,
-    flexDirection: 'row',
+    // flexDirection: 'row',
     justifyContent: 'space-between',
   },
   textStyle: {textAlign: 'center', fontWeight: 'bold'},

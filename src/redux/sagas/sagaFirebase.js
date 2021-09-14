@@ -39,6 +39,7 @@ export function* addTodos(action) {
     todos.add({
       title: action.payload.text,
       userId: action.payload.userId,
+      data: action.payload.data,
       completed: false,
     });
   } catch (e) {
