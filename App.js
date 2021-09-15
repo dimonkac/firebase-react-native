@@ -13,7 +13,6 @@ import {Calendars} from './src/screens/calendar';
 const Stack = createNativeStackNavigator();
 
 const App = () => {
-  console.log('render app');
   return (
     <Provider store={store}>
       <NavigationContainer>
@@ -29,24 +28,5 @@ const App = () => {
     </Provider>
   );
 };
-
-// const styles = StyleSheet.create({
-//   sectionContainer: {
-//     marginTop: 32,
-//     paddingHorizontal: 24,
-//   },
-//   sectionTitle: {
-//     fontSize: 24,
-//     fontWeight: '600',
-//   },
-//   sectionDescription: {
-//     marginTop: 8,
-//     fontSize: 18,
-//     fontWeight: '400',
-//   },
-//   highlight: {
-//     fontWeight: '700',
-//   },
-// });
 
 export default App;

@@ -5,6 +5,7 @@ import {Calendar, CalendarList, Agenda} from 'react-native-calendars';
 export const Calendars = ({dataChange}) => {
   return (
     <View>
+      <Text> Data </Text>
       <Calendar
         current={`${new Date().getFullYear()}-${
           new Date().getMonth() + 1

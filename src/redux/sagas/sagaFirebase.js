@@ -22,12 +22,12 @@ import {Alert} from 'react-native';
 
 export function* fetchTodos(action) {
   try {
-    const todos = yield call(getTodos, action.payload);
-    const normalizedTodos = todos.docs.map(todo => ({
-      docID: todo.id,
-      ...todo.data(),
-    }));
-    yield put(succesTodos(normalizedTodos));
+    // const todos = yield call(getTodos, action.payload);
+    // const normalizedTodos = todos.docs.map(todo => ({
+    //   docID: todo.id,
+    //   ...todo.data(),
+    // }));
+    yield put(succesTodos(action.payload));
   } catch (error) {
     console.log(error);
   }

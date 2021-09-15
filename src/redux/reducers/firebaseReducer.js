@@ -16,7 +16,7 @@ export const todosReducer = (state = initialState, action) => {
     case types.SUCCES_TODOS:
       return {
         ...state,
-        todos: action.payload,
+        todos: action.payload.todos,
         isloading: false,
       };
     case types.ADD_TODO_SUCCES:

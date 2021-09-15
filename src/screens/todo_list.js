@@ -9,9 +9,11 @@ import {
   Switch,
   View,
   StyleSheet,
+  Animated,
+  Easing,
 } from 'react-native';
 import {useDispatch, useSelector} from 'react-redux';
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useState, useRef} from 'react';
 import firestore from '@react-native-firebase/firestore';
 import * as types from '../redux/actions/types';
 import {
@@ -25,13 +27,13 @@ import {
 import {Calendars} from './calendar';
 
 export const TodoList = () => {
+  const {todos, isloading, userID} = useSelector(state => state.todosReducer);
   const dispatch = useDispatch();
   const [textTodo, setTextTodo] = useState('');
   const [modalVisible, setModalVisible] = useState(false);
   const [updateText, setUpdateText] = useState(`${updateText}`);
   const [updateId, setUpdateId] = useState('');
   const [updateData, setUpdateData] = useState('');
-  const {todos, isloading, userID} = useSelector(state => state.todosReducer);
 
   useEffect(() => {
     const subscriber = firestore()
@@ -42,7 +44,7 @@ export const TodoList = () => {
         documentSnapshot.forEach(doc =>
           todo.push({docID: doc.id, ...doc.data()}),
         );
-        dispatch(fetchTodos(userID));
+        dispatch(fetchTodos(todo, userID));
       });
     return () => subscriber();
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -97,7 +99,42 @@ export const TodoList = () => {
     setUpdateData(val);
   };
 
-  console.log(updateData);
+  const ItemAnimate = () => {
+    const animate_state = {
+      start: 0,
+      end: 100,
+    };
+    const value = useRef(new Animated.Value(animate_state.start)).current;
+
+    const startAnimate = () => {
+      Animated.timing(value, {
+        toValue: animate_state.end,
+        useNativeDriver: false,
+        duration: 600,
+        // easing: Easing.bounce,
+      }).start();
+    };
+
+    if (textTodo) {
+      startAnimate();
+    }
+    const inputRange = Object.values(animate_state);
+    const height = value.interpolate({inputRange, outputRange: [50, 350]});
+    return (
+      <Animated.View
+        style={{
+          height,
+          width: '100%',
+          justifyContent: 'center',
+        }}
+      >
+        <Calendars dataChange={dataChange} />
+      </Animated.View>
+    );
+  };
+
+  // const [inputFocus, setInputFocus] = useState(false);
+  // console.log(inputFocus);
 
   const renderTodo = ({item}) => {
     return (
@@ -110,6 +147,12 @@ export const TodoList = () => {
               style={styles.inputModal}
               onChangeText={newTextTodo}
               value={updateText}
+              onFocus={() => {
+                console.log('focus');
+              }}
+              // onFocus={() => {
+              //   setInputFocus(!inputFocus);
+              // }}
             />
             <Calendars dataChange={dataChange} />
             {updateData ? (
@@ -193,9 +236,7 @@ export const TodoList = () => {
           ) : null}
         </View>
       </View>
-      {textTodo ? (
-        <Calendars dataChange={dataChange}/>
-      ) : null}
+      {textTodo ? <ItemAnimate /> : null}
       <View style={styles.conteinerFlatlist}>
         {isloading ? (
           <ActivityIndicator
@@ -204,7 +245,7 @@ export const TodoList = () => {
             color="#00ff00"
           />
         ) : (
-          <FlatList data={todos.todos} renderItem={renderTodo} />
+          <FlatList data={todos} renderItem={renderTodo} />
         )}
       </View>
       <View>
