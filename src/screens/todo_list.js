@@ -10,7 +10,7 @@ import {
   View,
   StyleSheet,
   Animated,
-  Easing,
+  LayoutAnimation,
 } from 'react-native';
 import {useDispatch, useSelector} from 'react-redux';
 import React, {useEffect, useState, useRef} from 'react';
@@ -27,6 +27,7 @@ import {
 import {Calendars} from './calendar';
 
 export const TodoList = () => {
+  console.log('todo list');
   const {todos, isloading, userID} = useSelector(state => state.todosReducer);
   const dispatch = useDispatch();
   const [textTodo, setTextTodo] = useState('');
@@ -58,6 +59,7 @@ export const TodoList = () => {
     dispatch(addTodoSucess(textTodo, userID, updateData));
     setTextTodo('');
     setUpdateData('');
+    setCalendar(!calendar);
   };
 
   const deleteButton = id => {
@@ -99,39 +101,38 @@ export const TodoList = () => {
     setUpdateData(val);
   };
 
-  const ItemAnimate = () => {
-    const animate_state = {
-      start: 0,
-      end: 100,
-    };
-    const value = useRef(new Animated.Value(animate_state.start)).current;
-
-    const startAnimate = () => {
-      Animated.timing(value, {
-        toValue: animate_state.end,
-        useNativeDriver: false,
-        duration: 600,
-        // easing: Easing.bounce,
-      }).start();
-    };
-
-    if (textTodo) {
-      startAnimate();
-    }
-    const inputRange = Object.values(animate_state);
-    const height = value.interpolate({inputRange, outputRange: [50, 350]});
-    return (
-      <Animated.View
-        style={{
-          height,
-          width: '100%',
-          justifyContent: 'center',
-        }}
-      >
-        <Calendars dataChange={dataChange} />
-      </Animated.View>
-    );
-  };
+  // const ItemAnimate = () => {
+  //   const animate_state = {
+  //     start: 0,
+  //     end: 100,
+  //   };
+  //   const value = useRef(new Animated.Value(animate_state.start)).current;
+  //
+  //   const startAnimate = () => {
+  //     Animated.timing(value, {
+  //       toValue: animate_state.end,
+  //       useNativeDriver: false,
+  //       duration: 600,
+  //       // easing: Easing.bounce,
+  //     }).start();
+  //   };
+  //
+  //   startAnimate();
+  //
+  //   const inputRange = Object.values(animate_state);
+  //   const height = value.interpolate({inputRange, outputRange: [50, 350]});
+  //   return (
+  //     <Animated.View
+  //       style={{
+  //         height,
+  //         width: '100%',
+  //         justifyContent: 'center',
+  //       }}
+  //     >
+  //       <Calendars dataChange={dataChange} />
+  //     </Animated.View>
+  //   );
+  // };
 
   // const [inputFocus, setInputFocus] = useState(false);
   // console.log(inputFocus);
@@ -217,6 +218,13 @@ export const TodoList = () => {
     );
   };
 
+  const [calendar, setCalendar] = useState(false);
+
+  const animate = () => {
+    LayoutAnimation.configureNext(LayoutAnimation.Presets.spring);
+    setCalendar(!calendar);
+  };
+
   return (
     <SafeAreaView style={styles.container}>
       <View>
@@ -225,6 +233,7 @@ export const TodoList = () => {
       <View>
         <View style={styles.containerInput}>
           <TextInput
+            placeholder="enter your todo"
             style={styles.inputStele}
             onChangeText={onChangeText}
             value={textTodo}
@@ -235,8 +244,13 @@ export const TodoList = () => {
             </TouchableOpacity>
           ) : null}
         </View>
+        <View>
+          <TouchableOpacity onPress={animate}>
+            <Text style={{textAlign: 'center', fontSize: 18}}>add data</Text>
+          </TouchableOpacity>
+        </View>
       </View>
-      {textTodo ? <ItemAnimate /> : null}
+      {calendar ? <Calendars dataChange={dataChange} /> : null}
       <View style={styles.conteinerFlatlist}>
         {isloading ? (
           <ActivityIndicator

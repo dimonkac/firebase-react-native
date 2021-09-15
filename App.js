@@ -9,8 +9,15 @@ import {TodoList} from './src/screens/todo_list';
 import {Authentication} from './src/screens/authentication';
 import {Registration} from './src/screens/registration';
 import {Calendars} from './src/screens/calendar';
+import {UIManagerStatic as UIManager, Platform} from 'react-native';
 
 const Stack = createNativeStackNavigator();
+
+if (Platform.OS === 'android') {
+  if (UIManager.setLayoutAnimationEnabledExperimental) {
+    UIManager.setLayoutAnimationEnabledExperimental(true);
+  }
+}
 
 const App = () => {
   return (
