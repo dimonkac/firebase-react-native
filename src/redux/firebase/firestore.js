@@ -3,77 +3,28 @@ import auth from '@react-native-firebase/auth';
 import * as types from '../actions/types';
 import {Alert} from 'react-native';
 
-// export const getTodos = async userId => {
-//   try {
-//     return await firestore()
-//       .collection('todos')
-//       .where('userId', '==', `${userId}`)
-//       .get();
-// .onSnapshot(docs => {
-//   console.log(docs);
-// });
-// await firestore()
-//   .collection('todos')
-//   .onSnapshot(docs => {
-//     const todos = [];
-//     docs.forEach(doc => {
-//       todos.push({docID: doc.id, ...doc.data()});
-//     });
-//   });
-// return console.log(todos) ;
-//   } catch (e) {
-//     throw new Error(e);
-//   }
-// };
-
-export const addTodo = async () => {
+export const addTodo = async newTodo => {
   try {
-    return await firestore().collection('todos');
+    return await firestore().collection(types.TODOS).add(newTodo);
   } catch (e) {
     console.log(e);
   }
 };
 
 export const deleteTodo = async id => {
+  try {
+    await firestore().collection(types.TODOS).doc(id).delete();
+    return true;
+  } catch (e) {
+    console.log(e);
+  }
+};
+
+export const updateTodo = async (id, newTodo) => {
+  console.log(newTodo);
   console.log(id);
-  console.log(5);
   try {
-    await firestore().collection('todos').doc(id).delete();
-    return true;
-  } catch (e) {
-    console.log(e);
-  }
-};
-
-export const deleteTodoExpired = async todos => {
-  try {
-    await firestore().collection('todos').doc(todos).delete();
-    return true;
-  } catch (e) {
-    console.log('1321', e);
-  }
-};
-
-export const updateTodo = async ({id, text, data}) => {
-  try {
-    return await firestore()
-      .collection(types.TODOS)
-      .doc(id)
-      .update({title: text, data: data});
-  } catch (e) {
-    console.log(e);
-  }
-};
-
-export const changeCompleted = async ({id, complete}) => {
-  try {
-    return await firestore()
-      .collection(types.TODOS)
-      .doc(id)
-      .update({completed: complete})
-      .then(() => {
-        Alert.alert('change complete');
-      });
+    return await firestore().collection(types.TODOS).doc(id).update(newTodo);
   } catch (e) {
     console.log(e);
   }

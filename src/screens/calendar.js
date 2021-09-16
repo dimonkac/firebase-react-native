@@ -2,7 +2,7 @@ import React from 'react';
 import {Text, View} from 'react-native';
 import {Calendar} from 'react-native-calendars';
 
-export const Calendars = ({dataChange}) => {
+export const Calendars = ({dateChange}) => {
   return (
     <View>
       <Text> Data </Text>
@@ -11,7 +11,7 @@ export const Calendars = ({dataChange}) => {
           new Date().getMonth() + 1
         }-${new Date().getDate()}`}
         onDayPress={day => {
-          dataChange(day.dateString);
+          dateChange(day.dateString);
         }}
         monthFormat={'yyyy MM'}
         onMonthChange={month => {

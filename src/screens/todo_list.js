@@ -8,15 +8,15 @@ import {
   TouchableOpacity,
   Switch,
   View,
-  StyleSheet,
   LayoutAnimation,
+  StyleSheet,
 } from 'react-native';
 import {useDispatch, useSelector} from 'react-redux';
 import React, {useEffect, useState} from 'react';
 import firestore from '@react-native-firebase/firestore';
 import * as types from '../redux/actions/types';
 import {
-  addTodoSucess,
+  addTodoSuccess,
   deleteTodoAction,
   fetchSignOutAction,
   fetchTodos,
@@ -32,7 +32,8 @@ export const TodoList = () => {
   const [modalVisible, setModalVisible] = useState(false);
   const [updateText, setUpdateText] = useState(`${updateText}`);
   const [updateId, setUpdateId] = useState('');
-  const [updateData, setUpdateData] = useState('');
+  const [updateDate, setUpdateDate] = useState('');
+  const [calendar, setCalendar] = useState(false);
 
   useEffect(() => {
     const subscriber = firestore()
@@ -54,9 +55,9 @@ export const TodoList = () => {
   };
 
   const addTodoButton = () => {
-    dispatch(addTodoSucess(textTodo, userID, updateData));
+    dispatch(addTodoSuccess(textTodo, userID, updateDate));
     setTextTodo('');
-    setUpdateData('');
+    setUpdateDate('');
     setCalendar(!calendar);
   };
 
@@ -75,148 +76,110 @@ export const TodoList = () => {
     setUpdateText('');
   };
 
-  const updateTextTodo = () => {
+  const updateTextTodo = (id, completed) => {
     setModalVisible(!modalVisible);
-    dispatch(updateTodoAction(updateText, updateId, updateData));
+    dispatch(updateTodoAction(updateText, id, updateDate, completed, updateId));
+    // dispatch(updateTodoAction(updateText, updateId, updateDate));
     setUpdateText('');
-    setUpdateData('');
+    setUpdateDate('');
   };
 
   const newTextTodo = value => {
     setUpdateText(value);
   };
 
-  const changeCompleteTodo = (id, completed) => {
+  const changeCompleteTodo = (text, id, date, completed, docID) => {
     let complete = !completed;
-    dispatch(updateCompletedAction(id, complete));
+    dispatch(updateTodoAction(text, id, date, complete, docID));
   };
 
   const signOutButton = () => {
     dispatch(fetchSignOutAction());
   };
 
-  const dataChange = val => {
-    setUpdateData(val);
+  const dateChange = val => {
+    setUpdateDate(val);
   };
 
-  // const ItemAnimate = () => {
-  //   const animate_state = {
-  //     start: 0,
-  //     end: 100,
-  //   };
-  //   const value = useRef(new Animated.Value(animate_state.start)).current;
-  //
-  //   const startAnimate = () => {
-  //     Animated.timing(value, {
-  //       toValue: animate_state.end,
-  //       useNativeDriver: false,
-  //       duration: 600,
-  //       // easing: Easing.bounce,
-  //     }).start();
-  //   };
-  //
-  //   startAnimate();
-  //
-  //   const inputRange = Object.values(animate_state);
-  //   const height = value.interpolate({inputRange, outputRange: [50, 350]});
-  //   return (
-  //     <Animated.View
-  //       style={{
-  //         height,
-  //         width: '100%',
-  //         justifyContent: 'center',
-  //       }}
-  //     >
-  //       <Calendars dataChange={dataChange} />
-  //     </Animated.View>
-  //   );
-  // };
-
-  // const [inputFocus, setInputFocus] = useState(false);
-  // console.log(inputFocus);
-
-  const renderTodo = ({item}) => {
-    return (
-      <View style={styles.conteinerRenderFlat}>
-        <Modal visible={modalVisible}>
-          <View style={styles.positionModal}>
-            {/*<View style={{height: 200, marginVertical: 0}}>*/}
-            <TextInput
-              placeholder="enter text"
-              style={styles.inputModal}
-              onChangeText={newTextTodo}
-              value={updateText}
-              onFocus={() => {
-                console.log('focus in modal');
-              }}
-              // onFocus={() => {
-              //   setInputFocus(!inputFocus);
-              // }}
-            />
-            <Calendars dataChange={dataChange} />
-            {updateData ? (
-              <>
-                <TouchableOpacity
-                  onPress={() => {
-                    updateTextTodo(item.docID);
-                  }}
-                >
-                  <Text style={styles.buttonStyle}>Update</Text>
-                </TouchableOpacity>
-                <TouchableOpacity onPress={closeModal}>
-                  <Text style={styles.buttonStyle}>cancel</Text>
-                </TouchableOpacity>
-              </>
-            ) : (
+  const renderTodo = ({item}) => (
+    <View style={styles.containerRenderFlat}>
+      <Modal visible={modalVisible}>
+        <View style={styles.positionModal}>
+          <TextInput
+            placeholder="enter text"
+            style={styles.inputModal}
+            onChangeText={newTextTodo}
+            value={updateText}
+          />
+          <Calendars dateChange={dateChange} />
+          {updateDate ? (
+            <>
+              <TouchableOpacity
+                onPress={() => {
+                  updateTextTodo(item.userId, item.completed);
+                }}
+              >
+                <Text style={styles.buttonStyle}>Update</Text>
+              </TouchableOpacity>
               <TouchableOpacity onPress={closeModal}>
                 <Text style={styles.buttonStyle}>cancel</Text>
               </TouchableOpacity>
-            )}
-          </View>
-        </Modal>
-        <View
-          style={{
-            flex: 1,
-            flexDirection: 'row',
-            justifyContent: 'space-between',
-            alignItems: 'center',
+            </>
+          ) : (
+            <TouchableOpacity onPress={closeModal}>
+              <Text style={styles.buttonStyle}>cancel</Text>
+            </TouchableOpacity>
+          )}
+        </View>
+      </Modal>
+      <View
+        style={{
+          flex: 1,
+          flexDirection: 'row',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+        }}
+      >
+        <Switch
+          value={item.completed}
+          onValueChange={() =>
+            changeCompleteTodo(
+              item.title,
+              item.userId,
+              item.date,
+              item.completed,
+              item.docID,
+            )
+          }
+        />
+        <View style={styles.textContainer}>
+          <Text
+            key={item.docID}
+            style={{color: `${item.completed ? 'blue' : 'red'}`}}
+          >
+            {item.title}
+          </Text>
+        </View>
+        <TouchableOpacity
+          onPress={() => {
+            deleteButton(item.docID);
           }}
         >
-          <Switch
-            value={item.completed}
-            onValueChange={() => changeCompleteTodo(item.docID, item.completed)}
-          />
-          <View style={styles.textContainer}>
-            <Text
-              key={item.docID}
-              style={{color: `${item.completed ? 'blue' : 'red'}`}}
-            >
-              {item.title}
-            </Text>
-          </View>
-          <TouchableOpacity
-            onPress={() => {
-              deleteButton(item.docID);
-            }}
-          >
-            <Text>delete</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            onPress={() => {
-              openModal(item.docID, item.title);
-            }}
-          >
-            <Text>Update</Text>
-          </TouchableOpacity>
-        </View>
-        <View style={{flexWrap: 'wrap'}}>
-          <Text>{item.data}</Text>
-        </View>
+          <Text>delete</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          onPress={() => {
+            openModal(item.docID, item.title);
+          }}
+        >
+          <Text>Update</Text>
+        </TouchableOpacity>
       </View>
-    );
-  };
-
-  const [calendar, setCalendar] = useState(false);
+      <View style={{flexWrap: 'wrap'}}>
+        <Text>{item.date}</Text>
+      </View>
+    </View>
+  );
 
   const animate = () => {
     LayoutAnimation.configureNext(LayoutAnimation.Presets.linear);
@@ -232,12 +195,12 @@ export const TodoList = () => {
         <View style={styles.containerInput}>
           <TextInput
             placeholder="enter your todo"
-            style={styles.inputStele}
+            style={styles.inputStyle}
             onChangeText={onChangeText}
             value={textTodo}
             onFocus={animate}
           />
-          {updateData ? (
+          {updateDate ? (
             <TouchableOpacity onPress={addTodoButton}>
               <Text style={styles.buttonStyle}>ADD TODO</Text>
             </TouchableOpacity>
@@ -249,8 +212,8 @@ export const TodoList = () => {
           </TouchableOpacity>
         </View>
       </View>
-      {calendar ? <Calendars dataChange={dataChange} /> : null}
-      <View style={styles.conteinerFlatlist}>
+      {calendar ? <Calendars dateChange={dateChange} /> : null}
+      <View style={styles.containerFlat}>
         {isloading ? (
           <ActivityIndicator
             style={styles.indicatorStyle}
@@ -272,7 +235,7 @@ export const TodoList = () => {
 
 const styles = StyleSheet.create({
   container: {flex: 1},
-  conteinerFlatlist: {flex: 1, backgroundColor: 'orange'},
+  containerFlat: {flex: 1, backgroundColor: 'orange'},
   indicatorStyle: {marginTop: 150},
   buttonStyle: {
     backgroundColor: 'aqua',
@@ -280,20 +243,18 @@ const styles = StyleSheet.create({
     fontSize: 20,
     marginBottom: 5,
   },
-  inputStele: {borderWidth: 1, width: '60%', fontSize: 20},
+  inputStyle: {borderWidth: 1, width: '60%', fontSize: 20},
   containerInput: {
     flexDirection: 'row',
     justifyContent: 'space-around',
     marginVertical: 5,
   },
   inputModal: {borderWidth: 1, margin: 10},
-  positionModal: {flex: 1, top: '10%'},
-  conteinerRenderFlat: {
+  positionModal: {flex: 1, top: 40},
+  containerRenderFlat: {
     flex: 1,
     backgroundColor: 'grey',
-    // alignItems: 'center',
     margin: 10,
-    // flexDirection: 'row',
     justifyContent: 'space-between',
   },
   textStyle: {textAlign: 'center', fontWeight: 'bold'},

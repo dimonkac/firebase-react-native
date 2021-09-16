@@ -3,16 +3,14 @@ import * as types from '../actions/types';
 import moment from 'moment';
 import {Alert} from 'react-native';
 import {
-  deleteTodoExpiredAction,
-  succesSignInAction,
-  succesSignInAuthorizationAction,
-  succesSignInPasswordAction,
-  succesSignOutAction,
-  succesTodos,
+  successSignInAction,
+  successSignInAuthorizationAction,
+  successSignInPasswordAction,
+  successSignOutAction,
+  successTodos,
 } from '../actions/firebaseActions';
 import {
   addTodo,
-  // getTodos,
   deleteTodo,
   updateTodo,
   changeCompleted,
@@ -20,54 +18,32 @@ import {
   sigOutUser,
   signPasswordUser,
   signAuthorizationUser,
-  deleteTodoExpired,
 } from '../firebase/firestore';
 
 export function* fetchTodos(action) {
   try {
     const todoList = action.payload.filter(
-      t => t.data >= moment().format('YYYY-MM-DD'),
+      t => t.date >= moment().format('YYYY-MM-DD'),
     );
     const expiredTodos = action.payload.filter(
-      t => t.data < moment().format('YYYY-MM-DD'),
+      t => t.date < moment().format('YYYY-MM-DD'),
     );
-    yield put(succesTodos(todoList));
+    yield put(successTodos(todoList));
     if (expiredTodos.length > 0) {
-      yield put(deleteTodoExpiredAction(expiredTodos));
+      try {
+        expiredTodos.forEach(async elem => {
+          try {
+            await deleteTodo(elem.docID);
+          } catch (e) {
+            console.log(e);
+          }
+        });
+      } catch (error) {
+        console.log(error);
+      }
     }
   } catch (error) {
     console.log(error);
-  }
-}
-export function* deleteExpiredTodos(action) {
-  try {
-    // for (let i = 0; i <= action.payload.length; i++) {
-    //   yield call(deleteTodoExpired(action.payload[i].docID));
-    // }
-    console.log(action.payload);
-    action.payload.forEach(async elem => {
-      try {
-        await deleteTodoExpired(elem.docID);
-      } catch (e) {
-        console.log(e);
-      }
-    });
-  } catch (error) {
-    console.log(error);
-  }
-}
-
-export function* addTodos(action) {
-  try {
-    const todos = yield call(addTodo, action.payload);
-    todos.add({
-      title: action.payload.text,
-      userId: action.payload.userId,
-      data: action.payload.data,
-      completed: false,
-    });
-  } catch (e) {
-    console.log(e);
   }
 }
 
@@ -81,26 +57,47 @@ export function* deleteTodoSaga(action) {
   }
 }
 
-export function* updateTodoSaga(action) {
+export function* addTodos(action) {
   try {
-    yield call(updateTodo, action.payload);
+    const newTodo = {
+      title: action.payload.text,
+      userId: action.payload.userId,
+      date: action.payload.date,
+      completed: false,
+    };
+    yield call(addTodo, newTodo);
   } catch (e) {
     console.log(e);
   }
 }
 
-export function* updateCompleted(action) {
+export function* updateTodoSaga(action) {
+  console.log(action.payload);
   try {
-    yield call(changeCompleted, action.payload);
+    const newTodo = {
+      title: action.payload.text,
+      userId: action.payload.id,
+      date: action.payload.date,
+      completed: action.payload.complete,
+    };
+    yield updateTodo(action.payload.docID, newTodo);
   } catch (e) {
     console.log(e);
   }
 }
+
+// export function* updateCompleted(action) {
+//   try {
+//     yield call(changeCompleted, action.payload);
+//   } catch (e) {
+//     console.log(e);
+//   }
+// }
 
 export function* signInSaga() {
   try {
     const user = yield call(signUser);
-    yield put(succesSignInAction(user));
+    yield put(successSignInAction(user));
   } catch (e) {
     console.log(e);
   }
@@ -109,7 +106,7 @@ export function* signInSaga() {
 export function* signOutSaga() {
   try {
     const user = yield call(sigOutUser);
-    yield put(succesSignOutAction(user));
+    yield put(successSignOutAction(user));
   } catch (e) {
     console.log(e);
   }
@@ -118,7 +115,7 @@ export function* signOutSaga() {
 export function* signInPasswordSaga(action) {
   try {
     const user = yield call(signPasswordUser, action.payload);
-    yield put(succesSignInPasswordAction(user));
+    yield put(successSignInPasswordAction(user));
   } catch (e) {
     console.log(e);
   }
@@ -127,7 +124,7 @@ export function* signInPasswordSaga(action) {
 export function* signInAuthorizationSaga(action) {
   try {
     const user = yield call(signAuthorizationUser, action.payload);
-    yield put(succesSignInAuthorizationAction(user));
+    yield put(successSignInAuthorizationAction(user));
   } catch (e) {
     console.log(e);
   }
@@ -139,11 +136,10 @@ export function* watchSagaTodos() {
     takeLatest(types.ADD_TODO_SUCCES, addTodos),
     takeLatest(types.DELETE_TODO, deleteTodoSaga),
     takeLatest(types.UPDATE_TODO, updateTodoSaga),
-    takeLatest(types.UPDATE_COMPLETED, updateCompleted),
+    // takeLatest(types.UPDATE_COMPLETED, updateCompleted),
     takeLatest(types.SIGN_IN_FETCH, signInSaga),
     takeLatest(types.SIGN_OUT_FETCH, signOutSaga),
     takeLatest(types.SIGN_IN_FETCH_PASSWORD, signInPasswordSaga),
     takeLatest(types.SIGN_IN_FETCH_AUTHORIZATION, signInAuthorizationSaga),
-    takeLatest(types.DELETE_EXPIRED_TODO, deleteExpiredTodos),
   ]);
 }
