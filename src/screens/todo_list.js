@@ -9,11 +9,10 @@ import {
   Switch,
   View,
   StyleSheet,
-  Animated,
   LayoutAnimation,
 } from 'react-native';
 import {useDispatch, useSelector} from 'react-redux';
-import React, {useEffect, useState, useRef} from 'react';
+import React, {useEffect, useState} from 'react';
 import firestore from '@react-native-firebase/firestore';
 import * as types from '../redux/actions/types';
 import {
@@ -27,7 +26,6 @@ import {
 import {Calendars} from './calendar';
 
 export const TodoList = () => {
-  console.log('todo list');
   const {todos, isloading, userID} = useSelector(state => state.todosReducer);
   const dispatch = useDispatch();
   const [textTodo, setTextTodo] = useState('');
@@ -45,7 +43,7 @@ export const TodoList = () => {
         documentSnapshot.forEach(doc =>
           todo.push({docID: doc.id, ...doc.data()}),
         );
-        dispatch(fetchTodos(todo, userID));
+        dispatch(fetchTodos(todo));
       });
     return () => subscriber();
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -149,7 +147,7 @@ export const TodoList = () => {
               onChangeText={newTextTodo}
               value={updateText}
               onFocus={() => {
-                console.log('focus');
+                console.log('focus in modal');
               }}
               // onFocus={() => {
               //   setInputFocus(!inputFocus);
@@ -221,7 +219,7 @@ export const TodoList = () => {
   const [calendar, setCalendar] = useState(false);
 
   const animate = () => {
-    LayoutAnimation.configureNext(LayoutAnimation.Presets.spring);
+    LayoutAnimation.configureNext(LayoutAnimation.Presets.linear);
     setCalendar(!calendar);
   };
 
@@ -237,6 +235,7 @@ export const TodoList = () => {
             style={styles.inputStele}
             onChangeText={onChangeText}
             value={textTodo}
+            onFocus={animate}
           />
           {updateData ? (
             <TouchableOpacity onPress={addTodoButton}>

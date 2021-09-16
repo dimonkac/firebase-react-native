@@ -28,6 +28,13 @@ export const deleteTodoAction = id => {
   };
 };
 
+export const deleteTodoExpiredAction = todo => {
+  return {
+    type: types.DELETE_EXPIRED_TODO,
+    payload: todo,
+  };
+};
+
 export const updateTodoAction = (text, id, data) => {
   return {
     type: types.UPDATE_TODO,

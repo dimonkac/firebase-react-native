@@ -1,6 +1,9 @@
 import {put, all, call, takeLatest} from 'redux-saga/effects';
 import * as types from '../actions/types';
+import moment from 'moment';
+import {Alert} from 'react-native';
 import {
+  deleteTodoExpiredAction,
   succesSignInAction,
   succesSignInAuthorizationAction,
   succesSignInPasswordAction,
@@ -9,7 +12,7 @@ import {
 } from '../actions/firebaseActions';
 import {
   addTodo,
-  getTodos,
+  // getTodos,
   deleteTodo,
   updateTodo,
   changeCompleted,
@@ -17,17 +20,38 @@ import {
   sigOutUser,
   signPasswordUser,
   signAuthorizationUser,
+  deleteTodoExpired,
 } from '../firebase/firestore';
-import {Alert} from 'react-native';
 
 export function* fetchTodos(action) {
   try {
-    // const todos = yield call(getTodos, action.payload);
-    // const normalizedTodos = todos.docs.map(todo => ({
-    //   docID: todo.id,
-    //   ...todo.data(),
-    // }));
-    yield put(succesTodos(action.payload));
+    const todoList = action.payload.filter(
+      t => t.data >= moment().format('YYYY-MM-DD'),
+    );
+    const expiredTodos = action.payload.filter(
+      t => t.data < moment().format('YYYY-MM-DD'),
+    );
+    yield put(succesTodos(todoList));
+    if (expiredTodos.length > 0) {
+      yield put(deleteTodoExpiredAction(expiredTodos));
+    }
+  } catch (error) {
+    console.log(error);
+  }
+}
+export function* deleteExpiredTodos(action) {
+  try {
+    // for (let i = 0; i <= action.payload.length; i++) {
+    //   yield call(deleteTodoExpired(action.payload[i].docID));
+    // }
+    console.log(action.payload);
+    action.payload.forEach(async elem => {
+      try {
+        await deleteTodoExpired(elem.docID);
+      } catch (e) {
+        console.log(e);
+      }
+    });
   } catch (error) {
     console.log(error);
   }
@@ -120,5 +144,6 @@ export function* watchSagaTodos() {
     takeLatest(types.SIGN_OUT_FETCH, signOutSaga),
     takeLatest(types.SIGN_IN_FETCH_PASSWORD, signInPasswordSaga),
     takeLatest(types.SIGN_IN_FETCH_AUTHORIZATION, signInAuthorizationSaga),
+    takeLatest(types.DELETE_EXPIRED_TODO, deleteExpiredTodos),
   ]);
 }

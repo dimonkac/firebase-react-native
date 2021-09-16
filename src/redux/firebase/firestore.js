@@ -3,29 +3,28 @@ import auth from '@react-native-firebase/auth';
 import * as types from '../actions/types';
 import {Alert} from 'react-native';
 
-export const getTodos = async userId => {
-  try {
-    return await firestore()
-      .collection('todos')
-      .where('userId', '==', `${userId}`)
-      .get();
-
-    // .onSnapshot(docs => {
-    //   console.log(docs);
-    // });
-    // await firestore()
-    //   .collection('todos')
-    //   .onSnapshot(docs => {
-    //     const todos = [];
-    //     docs.forEach(doc => {
-    //       todos.push({docID: doc.id, ...doc.data()});
-    //     });
-    //   });
-    // return console.log(todos) ;
-  } catch (e) {
-    throw new Error(e);
-  }
-};
+// export const getTodos = async userId => {
+//   try {
+//     return await firestore()
+//       .collection('todos')
+//       .where('userId', '==', `${userId}`)
+//       .get();
+// .onSnapshot(docs => {
+//   console.log(docs);
+// });
+// await firestore()
+//   .collection('todos')
+//   .onSnapshot(docs => {
+//     const todos = [];
+//     docs.forEach(doc => {
+//       todos.push({docID: doc.id, ...doc.data()});
+//     });
+//   });
+// return console.log(todos) ;
+//   } catch (e) {
+//     throw new Error(e);
+//   }
+// };
 
 export const addTodo = async () => {
   try {
@@ -36,12 +35,22 @@ export const addTodo = async () => {
 };
 
 export const deleteTodo = async id => {
+  console.log(id);
+  console.log(5);
   try {
     await firestore().collection('todos').doc(id).delete();
     return true;
   } catch (e) {
-    // return null;
     console.log(e);
+  }
+};
+
+export const deleteTodoExpired = async todos => {
+  try {
+    await firestore().collection('todos').doc(todos).delete();
+    return true;
+  } catch (e) {
+    console.log('1321', e);
   }
 };
 
@@ -114,7 +123,5 @@ export const signAuthorizationUser = async ({email, password}) => {
     .catch(error => {
       console.log(error.code);
       console.log(error.message);
-      // var errorCode = error.code;
-      // var errorMessage = error.message;
     });
 };
