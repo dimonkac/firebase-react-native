@@ -8,7 +8,6 @@ import {
   TouchableOpacity,
   Switch,
   View,
-  LayoutAnimation,
   StyleSheet,
 } from 'react-native';
 import {useDispatch, useSelector} from 'react-redux';
@@ -16,14 +15,15 @@ import React, {useEffect, useState} from 'react';
 import firestore from '@react-native-firebase/firestore';
 import * as types from '../redux/actions/types';
 import {
-  addTodoSuccess,
+  addTodoSuccessAction,
   deleteTodoAction,
   fetchSignOutAction,
-  fetchTodos,
-  updateCompletedAction,
+  fetchTodosAction,
   updateTodoAction,
 } from '../redux/actions/firebaseActions';
 import {Calendars} from './calendar';
+import {AddInput} from '../components/addInput';
+// import {ModalUpdate} from '../components/modalUpdate';
 
 export const TodoList = () => {
   const {todos, isloading, userID} = useSelector(state => state.todosReducer);
@@ -33,7 +33,7 @@ export const TodoList = () => {
   const [updateText, setUpdateText] = useState(`${updateText}`);
   const [updateId, setUpdateId] = useState('');
   const [updateDate, setUpdateDate] = useState('');
-  const [calendar, setCalendar] = useState(false);
+  const [date, setDate] = useState('');
 
   useEffect(() => {
     const subscriber = firestore()
@@ -44,21 +44,20 @@ export const TodoList = () => {
         documentSnapshot.forEach(doc =>
           todo.push({docID: doc.id, ...doc.data()}),
         );
-        dispatch(fetchTodos(todo));
+        dispatch(fetchTodosAction(todo));
       });
     return () => subscriber();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const onChangeText = value => {
-    setTextTodo(value);
-  };
+  useEffect(() => {
+    dispatch(addTodoSuccessAction(textTodo, userID, date));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [textTodo, date]);
 
-  const addTodoButton = () => {
-    dispatch(addTodoSuccess(textTodo, userID, updateDate));
-    setTextTodo('');
-    setUpdateDate('');
-    setCalendar(!calendar);
+  const addTodoButton = (text, date) => {
+    setTextTodo(text);
+    setDate(date);
   };
 
   const deleteButton = id => {
@@ -79,7 +78,6 @@ export const TodoList = () => {
   const updateTextTodo = (id, completed) => {
     setModalVisible(!modalVisible);
     dispatch(updateTodoAction(updateText, id, updateDate, completed, updateId));
-    // dispatch(updateTodoAction(updateText, updateId, updateDate));
     setUpdateText('');
     setUpdateDate('');
   };
@@ -103,6 +101,14 @@ export const TodoList = () => {
 
   const renderTodo = ({item}) => (
     <View style={styles.containerRenderFlat}>
+      {/*<ModalUpdate*/}
+      {/*  modalVisible={modalVisible}*/}
+      {/*  item={item}*/}
+      {/*  closeModal={closeModal}*/}
+      {/*  dateChange={dateChange}*/}
+      {/*  updateText={updateText}*/}
+      {/*  updateTextTodo={updateTextTodo}*/}
+      {/*/>*/}
       <Modal visible={modalVisible}>
         <View style={styles.positionModal}>
           <TextInput
@@ -181,38 +187,12 @@ export const TodoList = () => {
     </View>
   );
 
-  const animate = () => {
-    LayoutAnimation.configureNext(LayoutAnimation.Presets.linear);
-    setCalendar(!calendar);
-  };
-
   return (
     <SafeAreaView style={styles.container}>
       <View>
         <Text style={styles.textStyle}>TODO LIST</Text>
       </View>
-      <View>
-        <View style={styles.containerInput}>
-          <TextInput
-            placeholder="enter your todo"
-            style={styles.inputStyle}
-            onChangeText={onChangeText}
-            value={textTodo}
-            onFocus={animate}
-          />
-          {updateDate ? (
-            <TouchableOpacity onPress={addTodoButton}>
-              <Text style={styles.buttonStyle}>ADD TODO</Text>
-            </TouchableOpacity>
-          ) : null}
-        </View>
-        <View>
-          <TouchableOpacity onPress={animate}>
-            <Text style={{textAlign: 'center', fontSize: 18}}>add data</Text>
-          </TouchableOpacity>
-        </View>
-      </View>
-      {calendar ? <Calendars dateChange={dateChange} /> : null}
+      <AddInput addTodoButton={addTodoButton} />
       <View style={styles.containerFlat}>
         {isloading ? (
           <ActivityIndicator

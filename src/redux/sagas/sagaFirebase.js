@@ -7,13 +7,12 @@ import {
   successSignInAuthorizationAction,
   successSignInPasswordAction,
   successSignOutAction,
-  successTodos,
+  successTodosAction,
 } from '../actions/firebaseActions';
 import {
   addTodo,
   deleteTodo,
   updateTodo,
-  changeCompleted,
   signUser,
   sigOutUser,
   signPasswordUser,
@@ -28,7 +27,7 @@ export function* fetchTodos(action) {
     const expiredTodos = action.payload.filter(
       t => t.date < moment().format('YYYY-MM-DD'),
     );
-    yield put(successTodos(todoList));
+    yield put(successTodosAction(todoList));
     if (expiredTodos.length > 0) {
       try {
         expiredTodos.forEach(async elem => {
@@ -72,7 +71,6 @@ export function* addTodos(action) {
 }
 
 export function* updateTodoSaga(action) {
-  console.log(action.payload);
   try {
     const newTodo = {
       title: action.payload.text,
@@ -85,14 +83,6 @@ export function* updateTodoSaga(action) {
     console.log(e);
   }
 }
-
-// export function* updateCompleted(action) {
-//   try {
-//     yield call(changeCompleted, action.payload);
-//   } catch (e) {
-//     console.log(e);
-//   }
-// }
 
 export function* signInSaga() {
   try {
@@ -136,7 +126,6 @@ export function* watchSagaTodos() {
     takeLatest(types.ADD_TODO_SUCCES, addTodos),
     takeLatest(types.DELETE_TODO, deleteTodoSaga),
     takeLatest(types.UPDATE_TODO, updateTodoSaga),
-    // takeLatest(types.UPDATE_COMPLETED, updateCompleted),
     takeLatest(types.SIGN_IN_FETCH, signInSaga),
     takeLatest(types.SIGN_OUT_FETCH, signOutSaga),
     takeLatest(types.SIGN_IN_FETCH_PASSWORD, signInPasswordSaga),

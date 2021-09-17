@@ -19,8 +19,6 @@ export const todosReducer = (state = initialState, action) => {
         todos: action.payload.todos,
         isloading: false,
       };
-    case types.UPDATE_TODO:
-      return {...state};
     case types.SIGN_IN_FETCH:
       return {
         ...state,

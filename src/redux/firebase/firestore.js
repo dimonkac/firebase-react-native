@@ -21,8 +21,6 @@ export const deleteTodo = async id => {
 };
 
 export const updateTodo = async (id, newTodo) => {
-  console.log(newTodo);
-  console.log(id);
   try {
     return await firestore().collection(types.TODOS).doc(id).update(newTodo);
   } catch (e) {
