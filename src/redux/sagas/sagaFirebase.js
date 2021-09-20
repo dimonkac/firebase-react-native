@@ -76,9 +76,9 @@ export function* updateTodoSaga(action) {
       title: action.payload.text,
       userId: action.payload.id,
       date: action.payload.date,
-      completed: action.payload.complete,
+      completed: action.payload.completed,
     };
-    yield updateTodo(action.payload.docID, newTodo);
+    yield updateTodo(action.payload.updateId, newTodo);
   } catch (e) {
     console.log(e);
   }

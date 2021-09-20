@@ -12,13 +12,12 @@ import {
   fetchAuthorizationAction,
   fetchSignInAction,
 } from '../redux/actions/firebaseActions';
-import {TodoList} from './todo_list';
+import TodoList from './todo_list';
 
 export const Authentication = ({navigation}) => {
   const [email, setEmail] = useState('');
   const [password, setPassord] = useState('');
   const dispatch = useDispatch();
-
   const user = useSelector(state => state.todosReducer.userID);
 
   const sign = () => {

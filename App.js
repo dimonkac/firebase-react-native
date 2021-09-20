@@ -5,7 +5,7 @@ import {Provider} from 'react-redux';
 import store from './src/redux/store';
 import {Counter} from './src/components/counter';
 import {DemoScreen} from './src/screens/demo_screens';
-import {TodoList} from './src/screens/todo_list';
+import TodoList from './src/screens/todo_list';
 import {Authentication} from './src/screens/authentication';
 import {Registration} from './src/screens/registration';
 import {Calendars} from './src/screens/calendar';
