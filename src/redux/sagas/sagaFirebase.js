@@ -71,14 +71,15 @@ export function* addTodos(action) {
 }
 
 export function* updateTodoSaga(action) {
+  console.log(action.payload);
   try {
     const newTodo = {
       title: action.payload.text,
-      userId: action.payload.userId,
+      userId: action.payload.id,
       date: action.payload.date,
-      completed: action.payload.completed,
+      completed: action.payload.complete,
     };
-    yield updateTodo(action.payload.idTodo, newTodo);
+    yield updateTodo(action.payload.docID, newTodo);
   } catch (e) {
     console.log(e);
   }

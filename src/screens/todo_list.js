@@ -16,6 +16,13 @@ import * as types from '../redux/actions/types';
 import {Calendars} from './calendar';
 import {AddInput} from '../components/addInput';
 import {connect} from 'react-redux';
+import {
+  addTodoSuccessAction,
+  deleteTodoAction,
+  fetchSignOutAction,
+  fetchTodosAction,
+  updateTodoAction,
+} from '../redux/actions/firebaseActions';
 
 class TodoList extends React.Component {
   constructor(props) {
@@ -97,7 +104,7 @@ class TodoList extends React.Component {
             <Calendars dateChange={this.dateChange} />
             <TouchableOpacity
               onPress={() => {
-                this.updateTextTodo(item.userId, item.completed);
+                this.updateTextTodo(item.userId, item.completed, item.title);
               }}
             >
               <Text style={styles.buttonStyle}>Update</Text>
@@ -217,23 +224,29 @@ const mapStateToProps = state => {
   return state.todosReducer;
 };
 
-const mapDispatchToProps = dispatch => {
-  return {
-    updateTodoAction: (text, userId, date, completed, idTodo) =>
-      dispatch({
-        type: types.UPDATE_TODO,
-        payload: {text, userId, date, completed, idTodo},
-      }),
-    fetchTodosAction: todo =>
-      dispatch({type: types.FETCH_TODOS, payload: todo}),
-    addTodoSuccessAction: (text, userId, date) =>
-      dispatch({type: types.ADD_TODO_SUCCES, payload: {text, userId, date}}),
-    deleteTodoAction: id => dispatch({type: types.DELETE_TODO, payload: id}),
-    fetchSignOutAction: () => dispatch({type: types.SIGN_OUT_FETCH}),
-  };
-};
+// const mapDispatchToProps = dispatch => {
+//   return {
+//     updateTodoAction: (text, userId, date, completed, idTodo) =>
+//       dispatch({
+//         type: types.UPDATE_TODO,
+//         payload: {text, userId, date, completed, idTodo},
+//       }),
+//     fetchTodosAction: todo =>
+//       dispatch({type: types.FETCH_TODOS, payload: todo}),
+//     addTodoSuccessAction: (text, userId, date) =>
+//       dispatch({type: types.ADD_TODO_SUCCES, payload: {text, userId, date}}),
+//     deleteTodoAction: id => dispatch({type: types.DELETE_TODO, payload: id}),
+//     fetchSignOutAction: () => dispatch({type: types.SIGN_OUT_FETCH}),
+//   };
+// };
 
-export default connect(mapStateToProps, mapDispatchToProps)(TodoList);
+export default connect(mapStateToProps, {
+  fetchTodosAction,
+  addTodoSuccessAction,
+  deleteTodoAction,
+  updateTodoAction,
+  fetchSignOutAction,
+})(TodoList);
 
 // export const TodoList = () => {
 //   const {todos, isloading, userID} = useSelector(state => state.todosReducer);
