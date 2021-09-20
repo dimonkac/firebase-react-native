@@ -74,11 +74,11 @@ export function* updateTodoSaga(action) {
   try {
     const newTodo = {
       title: action.payload.text,
-      userId: action.payload.id,
+      userId: action.payload.userId,
       date: action.payload.date,
       completed: action.payload.completed,
     };
-    yield updateTodo(action.payload.updateId, newTodo);
+    yield updateTodo(action.payload.idTodo, newTodo);
   } catch (e) {
     console.log(e);
   }

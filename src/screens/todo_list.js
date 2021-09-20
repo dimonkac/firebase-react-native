@@ -10,20 +10,11 @@ import {
   View,
   StyleSheet,
 } from 'react-native';
-import {useDispatch, useSelector} from 'react-redux';
-import React, {useEffect, useState} from 'react';
+import React from 'react';
 import firestore from '@react-native-firebase/firestore';
 import * as types from '../redux/actions/types';
-import {
-  addTodoSuccessAction,
-  deleteTodoAction,
-  fetchSignOutAction,
-  fetchTodosAction,
-  updateTodoAction,
-} from '../redux/actions/firebaseActions';
 import {Calendars} from './calendar';
 import {AddInput} from '../components/addInput';
-// import {ModalUpdate} from '../components/modalUpdate';
 import {connect} from 'react-redux';
 
 class TodoList extends React.Component {
@@ -87,6 +78,11 @@ class TodoList extends React.Component {
     );
   };
 
+  changeCompleteTodo = (text, userId, date, complete, idTodo) => {
+    let completed = !complete;
+    this.props.updateTodoAction(text, userId, date, completed, idTodo);
+  };
+
   render() {
     const renderTodo = ({item}) => (
       <View style={styles.containerRenderFlat}>
@@ -111,14 +107,7 @@ class TodoList extends React.Component {
             </TouchableOpacity>
           </View>
         </Modal>
-        <View
-          style={{
-            flex: 1,
-            flexDirection: 'row',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-          }}
-        >
+        <View style={styles.todoCard}>
           <Switch
             value={item.completed}
             onValueChange={() =>
@@ -154,7 +143,7 @@ class TodoList extends React.Component {
             <Text>Update</Text>
           </TouchableOpacity>
         </View>
-        <View style={{flexWrap: 'wrap'}}>
+        <View style={styles.dateContainer}>
           <Text>{item.date}</Text>
         </View>
       </View>
@@ -188,6 +177,13 @@ class TodoList extends React.Component {
 }
 
 const styles = StyleSheet.create({
+  todoCard: {
+    flex: 1,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  dateContainer: {flexWrap: 'wrap'},
   container: {flex: 1},
   containerFlat: {flex: 1, backgroundColor: 'orange'},
   indicatorStyle: {marginTop: 150},
@@ -223,10 +219,10 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
   return {
-    updateTodoAction: (text, id, date, completed, updateId) =>
+    updateTodoAction: (text, userId, date, completed, idTodo) =>
       dispatch({
         type: types.UPDATE_TODO,
-        payload: {text, id, date, completed, updateId},
+        payload: {text, userId, date, completed, idTodo},
       }),
     fetchTodosAction: todo =>
       dispatch({type: types.FETCH_TODOS, payload: todo}),

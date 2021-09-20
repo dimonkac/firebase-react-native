@@ -20,9 +20,12 @@ export const deleteTodo = async id => {
   }
 };
 
-export const updateTodo = async (id, newTodo) => {
+export const updateTodo = async (idTodo, newTodo) => {
   try {
-    return await firestore().collection(types.TODOS).doc(id).update(newTodo);
+    return await firestore()
+      .collection(types.TODOS)
+      .doc(idTodo)
+      .update(newTodo);
   } catch (e) {
     console.log(e);
   }
